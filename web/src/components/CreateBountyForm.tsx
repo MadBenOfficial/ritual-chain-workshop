@@ -86,8 +86,9 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
       return;
     }
 
-    const subTs = BigInt(Math.floor(subMs / 1000));
-    const revTs = BigInt(Math.floor(revMs / 1000));
+    // Ritual's block.timestamp is in MILLISECONDS, so deadlines must be ms too.
+    const subTs = BigInt(subMs);
+    const revTs = BigInt(revMs);
     const value = reward.trim() === "" ? 0n : parseEther(reward.trim());
     setCreatedId(null);
 

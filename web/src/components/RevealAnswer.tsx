@@ -42,7 +42,7 @@ export function RevealAnswer({
     }
   }, [address, bountyId]);
 
-  if (!canReveal(bounty, now / 1000)) return null;
+  if (!canReveal(bounty, now)) return null;
 
   const validSalt = /^0x[0-9a-fA-F]{64}$/.test(salt);
   const preview =

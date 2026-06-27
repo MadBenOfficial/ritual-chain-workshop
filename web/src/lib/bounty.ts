@@ -82,37 +82,36 @@ export const PHASE_META: Record<
 };
 
 /**
- * Phase is driven by the two deadlines. NOTE on units: this UI compares against
- * seconds. Ritual's block.timestamp is in milliseconds, but the contract stores
- * whatever value you pass to createBounty — this UI passes second-based deadlines
- * and compares in seconds, which is self-consistent for the demo. (See README.)
+ * Phase is driven by the two deadlines. UNITS: Ritual's block.timestamp is in
+ * MILLISECONDS, so the contract stores millisecond deadlines and this UI compares
+ * against Date.now() (also milliseconds). Everything is consistent in ms.
  */
-export function getBountyPhase(b: Bounty, nowSeconds = Date.now() / 1000): BountyPhase {
+export function getBountyPhase(b: Bounty, nowMs = Date.now()): BountyPhase {
   if (b.finalized) return "finalized";
   if (b.judged) return "judged";
-  if (nowSeconds < Number(b.submissionDeadline)) return "submission";
-  if (nowSeconds < Number(b.revealDeadline)) return "reveal";
+  if (nowMs < Number(b.submissionDeadline)) return "submission";
+  if (nowMs < Number(b.revealDeadline)) return "reveal";
   return "judging";
 }
 
 /** Can a participant still submit a commitment? */
-export function canCommit(b: Bounty, nowSeconds = Date.now() / 1000): boolean {
-  return !b.judged && !b.finalized && nowSeconds < Number(b.submissionDeadline);
+export function canCommit(b: Bounty, nowMs = Date.now()): boolean {
+  return !b.judged && !b.finalized && nowMs < Number(b.submissionDeadline);
 }
 
 /** Can a participant reveal right now? */
-export function canReveal(b: Bounty, nowSeconds = Date.now() / 1000): boolean {
+export function canReveal(b: Bounty, nowMs = Date.now()): boolean {
   return (
     !b.judged &&
     !b.finalized &&
-    nowSeconds >= Number(b.submissionDeadline) &&
-    nowSeconds < Number(b.revealDeadline)
+    nowMs >= Number(b.submissionDeadline) &&
+    nowMs < Number(b.revealDeadline)
   );
 }
 
 /** Can the owner run judgeAll? (reveal window over, not judged yet) */
-export function canJudge(b: Bounty, nowSeconds = Date.now() / 1000): boolean {
-  return !b.judged && !b.finalized && nowSeconds >= Number(b.revealDeadline);
+export function canJudge(b: Bounty, nowMs = Date.now()): boolean {
+  return !b.judged && !b.finalized && nowMs >= Number(b.revealDeadline);
 }
 
 // ----- commit-reveal crypto helpers (must match the contract) -----

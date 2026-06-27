@@ -41,7 +41,7 @@ export function SubmitCommitment({
     onSubmitted();
   });
 
-  if (!canCommit(bounty, now / 1000)) return null;
+  if (!canCommit(bounty, now)) return null;
 
   const mine = address ? recallCommitment(bountyId, address) : null;
 
