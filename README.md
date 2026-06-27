@@ -156,6 +156,36 @@ encrypted answers privately — designed in [`docs/ARCHITECTURE.md`](docs/ARCHIT
 
 ---
 
+## 8. Live deployment & on-chain proof (Ritual Chain, id 1979)
+
+The contract was deployed and a full bounty lifecycle was executed on the live
+Ritual network. Every phase ran in its correct time window.
+
+**Contract:** [`0x0fBC37b2472d45b9465BB1741CA7aDCDD81707D4`](https://explorer.ritualfoundation.org/address/0x0fBC37b2472d45b9465BB1741CA7aDCDD81707D4)
+
+The bounty used two deadlines (Ritual `block.timestamp` is in **milliseconds**):
+- submission deadline = `1782599461645`
+- reveal deadline = `1782599491645`
+
+| # | Phase | What the tx does | Tx hash | Timestamp (ms) | Window check |
+|---|-------|------------------|---------|----------------|--------------|
+| 1 | `createBounty` | Opens bounty #1, funds the reward, sets both deadlines | [`0xa5e5d5f2…d4846f`](https://explorer.ritualfoundation.org/tx/0xa5e5d5f2155653a81c872ab9acbbd9f4aebb9b53e499df07ccdbac4cc0d4846f) | 1782599434089 | — |
+| 2 | `submitCommitment` | Posts only the commitment hash (answer stays hidden) | [`0x75af3ee2…f6f85`](https://explorer.ritualfoundation.org/tx/0x75af3ee2c0b1f0956840a6c4521244908e5c10da989b29c10dbcb88e317f6f85) | 1782599439537 | **< submission deadline** ✓ |
+| 3 | `revealAnswer` | Reveals answer + salt; contract verifies the hash | [`0xf6ef0a50…91d7d48`](https://explorer.ritualfoundation.org/tx/0xf6ef0a50d72801e04b80360ed60f90154230790d521893fa4d7ffefa691d7d48) | 1782599478116 | **in [submission, reveal)** ✓ |
+| 4 | `judgeAll` | Marks the bounty judged (batch step) | [`0x7fd8ec70…a4b02`](https://explorer.ritualfoundation.org/tx/0x7fd8ec70d93fa04d666aa5c79d3710d5a72ca54b8da8a34f60de148ccb3a4b02) | 1782599510933 | **> reveal deadline** ✓ |
+| 5 | `finalizeWinner` | Picks winner #0, pays the reward | [`0xbdbb8e9e…3365b4`](https://explorer.ritualfoundation.org/tx/0xbdbb8e9e68a2571ee247114a91f2b94974a4b5c9272e573c4e04900fa13365b4) | 1782599512979 | **after judging** ✓ |
+
+**Deadline rules were respected end-to-end:** the commitment landed before the
+submission deadline, the reveal happened strictly inside the reveal window, and
+judging + finalization only happened after the reveal deadline. Verified on-chain:
+during the submission phase `getSubmission` returned an empty `answer`; it only
+became `"use solar power with battery storage"` after a valid reveal — proving the
+answer stayed hidden until reveal.
+
+> The deploy + full cycle cost ~0.0006 RITUAL in gas. `judgeAll` was run with an
+> empty `llmInput` here (the LLM precompile's worst-case escrow is ~0.31 RITUAL,
+> refundable); on a live Ritual judging run you pass the ABI-encoded batch request.
+
 ## Repo layout
 
 ```
