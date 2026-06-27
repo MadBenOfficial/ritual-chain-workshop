@@ -12,3 +12,8 @@ hardhat/types/
 web/.next/
 web/out/
 dist/
+
+# stray temp scripts
+hardhat/*.sh
+hardhat/*-out.txt
+hardhat/bytecode.hex
