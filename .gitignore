@@ -1,0 +1,14 @@
+# secrets — never commit
+.env
+*.env
+**/.env
+
+# deps & build
+node_modules/
+**/node_modules/
+hardhat/artifacts/
+hardhat/cache/
+hardhat/types/
+web/.next/
+web/out/
+dist/
