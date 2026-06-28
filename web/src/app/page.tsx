@@ -1,10 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useAccount, useChainId } from "wagmi";
 import { WalletConnect } from "@/components/WalletConnect";
 import { CreateBountyForm } from "@/components/CreateBountyForm";
 import { LoadBountyPanel } from "@/components/LoadBountyPanel";
 import { BountyView } from "@/components/BountyView";
+import { EclipseStage, StageFrame, type StageState } from "@/components/Observatory";
 import { useRecentBounties } from "@/hooks/useRecentBounties";
 import { isContractConfigured, contractAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
@@ -14,6 +16,9 @@ import { Notice } from "@/components/ui";
 export default function Home() {
   const [selectedId, setSelectedId] = useState<bigint | null>(null);
   const { ids, add } = useRecentBounties();
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
+  const wrongChain = isConnected && chainId !== ritualChain.id;
 
   // Track any opened bounty in the recent list too. `add` is a no-op when the
   // id is already most-recent, so this won't loop.
@@ -96,6 +101,38 @@ export default function Home() {
           <CreateBountyForm onCreated={handleCreated} />
           <LoadBountyPanel selectedId={selectedId} onSelect={setSelectedId} recentIds={ids} />
         </section>
+
+        {/* Central stage when no bounty is selected — Connect / no bounty state */}
+        {selectedId === null && (
+          <section className="mt-6">
+            <StageFrame
+              caption={
+                wrongChain
+                  ? `Wrong network — align your wallet with ${ritualChain.name} to power the eclipse.`
+                  : !isConnected
+                    ? "A dark, energy-less eclipse. Connect your wallet to send a light-line into the observatory and power it up."
+                    : "Ritual Orbit connected. Open a new bounty star above or align the lens on an existing one to enter the eclipse."
+              }
+            >
+              <div className={!isConnected || wrongChain ? undefined : "power-up"}>
+                <EclipseStage
+                  phase={
+                    (wrongChain
+                      ? "wrong-network"
+                      : !isConnected
+                        ? "disconnected"
+                        : "commit") as StageState
+                  }
+                />
+              </div>
+              {isConnected && !wrongChain && (
+                <span className="rounded-full border border-cyan-400/20 bg-cyan-500/5 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-cyan-200/80">
+                  Awaiting a bounty star
+                </span>
+              )}
+            </StageFrame>
+          </section>
+        )}
 
         {/* Selected bounty */}
         {selectedId !== null && (

@@ -40,6 +40,11 @@ export function SubmissionsList({
               ranking={judge?.ranking?.find((r) => r.index === i)}
               recommended={judge?.winnerIndex === i}
               isWinner={finalWinner === i}
+              humanOverride={
+                finalWinner === i &&
+                judge?.winnerIndex !== undefined &&
+                judge.winnerIndex !== i
+              }
             />
           ))
         )}
@@ -54,12 +59,14 @@ function SubmissionRow({
   ranking,
   recommended,
   isWinner,
+  humanOverride,
 }: {
   bountyId: bigint;
   index: number;
   ranking?: { index: number; score: number; reason: string };
   recommended?: boolean;
   isWinner?: boolean;
+  humanOverride?: boolean;
 }) {
   const { data, isLoading } = useReadContract({
     address: contractAddress,
@@ -78,27 +85,32 @@ function SubmissionRow({
     <div
       className={`rounded-xl border p-3 transition-colors ${
         isWinner
-          ? "border-amber-300/40 bg-amber-400/5"
+          ? "border-amber-300/40 bg-amber-400/5 shadow-[inset_0_0_30px_-8px_rgba(245,196,81,0.6)]"
           : recommended
-            ? "border-cyan-400/40 bg-cyan-500/5"
-            : "border-violet-400/10 bg-black/25"
+            ? "border-cyan-400/40 bg-cyan-500/5 shadow-[inset_0_0_24px_-8px_rgba(34,211,238,0.5)]"
+            : revealed
+              ? "border-violet-400/10 bg-black/25"
+              : "border-white/5 bg-black/40 opacity-80"
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-zinc-500">★{index}</span>
+          <span className={`font-mono text-xs ${isWinner ? "text-amber-300 corona-flicker" : recommended ? "text-cyan-300" : "text-zinc-500"}`}>
+            ★{index}
+          </span>
           <span className="font-mono text-sm text-zinc-300">
             {submitter ? shortenAddress(submitter) : isLoading ? "loading…" : "-"}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           {ranking ? <Badge tone="zinc">score {ranking.score}</Badge> : null}
-          {revealed ? <Badge tone="cyan">Revealed</Badge> : <Badge tone="violet">Eclipsed</Badge>}
+          {revealed ? <Badge tone="cyan">Revealed</Badge> : <Badge tone="violet">Eclipsed · Sealed</Badge>}
           {isWinner ? (
             <Badge tone="gold">Golden orbit</Badge>
           ) : recommended ? (
             <Badge tone="cyan">AI recommends</Badge>
           ) : null}
+          {humanOverride ? <Badge tone="amber">Human override</Badge> : null}
         </div>
       </div>
 

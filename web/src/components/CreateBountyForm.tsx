@@ -18,6 +18,7 @@ import {
   TxStatus,
   Notice,
 } from "@/components/ui";
+import { RewardCore } from "@/components/Observatory";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -186,11 +187,25 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
 
           {createdId !== null && (
-            <Notice tone="cyan">
-              New orbit opened with id{" "}
-              <span className="font-mono font-semibold">#{createdId.toString()}</span>. Loaded
-              below.
-            </Notice>
+            <div className="rise-in space-y-2 rounded-xl border border-amber-300/30 bg-amber-400/5 p-3">
+              <div className="flex items-center gap-3">
+                <div className="star-birth shrink-0">
+                  <RewardCore size={56} charging />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm text-amber-100">
+                    A new bounty star is born. Reward locked in orbit as golden energy in its core.
+                  </p>
+                  <p className="mt-1 text-xs text-amber-200/80">
+                    Stellar coordinate{" "}
+                    <span className="font-mono font-semibold text-amber-100">
+                      #{createdId.toString()}
+                    </span>{" "}
+                    · loaded below.
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
         </form>
       </CardBody>

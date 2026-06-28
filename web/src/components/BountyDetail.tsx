@@ -21,31 +21,19 @@ export function BountyDetail({
   const phase = getBountyPhase(bounty, now || undefined);
   const meta = PHASE_META[phase];
 
-  // Countdown ring: fraction of the live window still remaining.
-  let ring:
-    | { progress: number; tone: "cyan" | "violet" | "gold"; label: string; sub: string }
-    | null = null;
-  if (canCommit(bounty, nowMs)) {
-    const remaining = Number(bounty.submissionDeadline) - nowMs;
-    // Approximate the commit window length from the reveal span as a fallback.
-    const span =
-      Number(bounty.revealDeadline) - Number(bounty.submissionDeadline) || remaining || 1;
-    ring = {
-      progress: Math.max(0, Math.min(1, remaining / span)),
-      tone: "violet",
-      label: "Eclipse closing",
-      sub: `commit ${formatRelative(bounty.submissionDeadline)}`,
-    };
-  } else if (canReveal(bounty, nowMs)) {
-    const remaining = Number(bounty.revealDeadline) - nowMs;
-    const span = Number(bounty.revealDeadline) - Number(bounty.submissionDeadline) || 1;
-    ring = {
-      progress: Math.max(0, Math.min(1, remaining / span)),
-      tone: "cyan",
-      label: "Eclipse retreating",
-      sub: `reveal ${formatRelative(bounty.revealDeadline)}`,
-    };
-  }
+  // Two orbital rings — submission + reveal — each a moon orbiting the bounty.
+  // The commit window length isn't stored on-chain, so approximate its span
+  // from the reveal window as a stable fallback for the ring fraction.
+  const revWindow = Number(bounty.revealDeadline) - Number(bounty.submissionDeadline) || 1;
+  const subRemaining = Number(bounty.submissionDeadline) - nowMs;
+  const subSpan = revWindow;
+  const subProgress = Math.max(0, Math.min(1, subRemaining / subSpan));
+
+  const revRemaining = Number(bounty.revealDeadline) - nowMs;
+  const revProgress = Math.max(0, Math.min(1, revRemaining / revWindow));
+
+  const commitOpen = canCommit(bounty, nowMs);
+  const revealOpen = canReveal(bounty, nowMs);
 
   return (
     <Card>
@@ -66,16 +54,31 @@ export function BountyDetail({
         }
       />
       <CardBody className="space-y-4">
-        {ring ? (
+        {/* Two orbital countdown rings: submission + reveal moons. */}
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="rounded-xl border border-violet-400/10 bg-black/30 px-3 py-2">
             <CountdownRing
-              progress={ring.progress}
-              tone={ring.tone}
-              label={ring.label}
-              sub={ring.sub}
+              progress={commitOpen ? subProgress : 0}
+              tone="violet"
+              label="Submission orbit"
+              sub={commitOpen ? `commit ${formatRelative(bounty.submissionDeadline)}` : "eclipse sealed"}
             />
           </div>
-        ) : null}
+          <div className="rounded-xl border border-violet-400/10 bg-black/30 px-3 py-2">
+            <CountdownRing
+              progress={revealOpen ? revProgress : phase === "commit" ? 1 : 0}
+              tone="cyan"
+              label="Reveal orbit"
+              sub={
+                revealOpen
+                  ? `reveal ${formatRelative(bounty.revealDeadline)}`
+                  : phase === "commit"
+                    ? "opens after commit"
+                    : "reveal closed"
+              }
+            />
+          </div>
+        </div>
 
         <div>
           <div className="text-[11px] uppercase tracking-wide text-zinc-500">Rubric</div>

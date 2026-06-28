@@ -29,15 +29,25 @@ export function WalletConnect() {
           <Button
             variant="secondary"
             onClick={() => switchChain({ chainId: ritualChain.id })}
-            className="ring-amber-400/40 text-amber-200"
+            className="ring-amber-400/40 text-amber-200 eclipse-vibrate"
           >
             Wrong network · switch to {ritualChain.name}
           </Button>
         ) : (
-          <Badge tone="cyan">{ritualChain.name}</Badge>
+          <Badge tone="cyan">
+            <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_2px_rgba(34,211,238,0.8)]" />
+            Ritual Orbit Connected
+          </Badge>
         )}
-        <Button variant="secondary" onClick={() => disconnect()}>
-          {shortenAddress(address)}
+        <Button
+          variant="secondary"
+          onClick={() => disconnect()}
+          title="Astral coordinates · click to disconnect"
+        >
+          <span className="text-[10px] uppercase tracking-[0.14em] text-cyan-200/60">
+            coords
+          </span>
+          <span className="font-mono">{shortenAddress(address)}</span>
         </Button>
       </div>
     );

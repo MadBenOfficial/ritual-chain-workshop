@@ -41,16 +41,16 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
                       .map((r) => (
                         <tr
                           key={r.index}
-                          className={`border-t border-white/5 ${
+                          className={`border-t border-white/5 transition-colors ${
                             r.index === parsed.winnerIndex
-                              ? "bg-cyan-500/10"
-                              : ""
+                              ? "bg-cyan-500/10 shadow-[inset_0_0_24px_-6px_rgba(34,211,238,0.6)]"
+                              : "opacity-70"
                           }`}
                         >
                           <td className="px-3 py-2 font-mono">
                             {r.index}
                             {r.index === parsed.winnerIndex && (
-                              <span className="ml-1 text-cyan-300">★</span>
+                              <span className="ml-1 text-cyan-300 corona-flicker">★</span>
                             )}
                           </td>
                           <td className="px-3 py-2 font-medium">{r.score}</td>
@@ -68,6 +68,10 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
                 {parsed.summary}
               </div>
             )}
+
+            <p className="text-center text-[11px] uppercase tracking-[0.16em] text-cyan-200/70">
+              AI recommends. Human aligns.
+            </p>
           </>
         ) : (
           <>

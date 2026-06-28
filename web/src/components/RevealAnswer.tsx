@@ -9,6 +9,7 @@ import { ritualChain } from "@/config/wagmi";
 import { canReveal, computeCommitment, recallCommitment, type Bounty } from "@/lib/bounty";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { CopyHash } from "@/components/Observatory";
+import { motion } from "framer-motion";
 import { Card, CardHeader, CardBody, Field, Textarea, Input, Button, TxStatus, Notice } from "@/components/ui";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -103,8 +104,8 @@ export function RevealAnswer({
             </Notice>
           ) : (
             <Notice tone="amber">
-              No saved corona found in this browser for the connected wallet. If you entered the
-              eclipse elsewhere, paste your answer and salt manually.
+              Lost reveal coordinates — no saved corona found in this browser for the connected
+              wallet. If you entered the eclipse elsewhere, paste your answer and salt manually.
             </Notice>
           )}
           <Field label="Answer">
@@ -119,6 +120,8 @@ export function RevealAnswer({
               <div className="mb-1 text-[11px] uppercase tracking-[0.14em] opacity-70">
                 Two coronas
               </div>
+              {/* Visual alignment of the two coronas, driven by `matches`. */}
+              <TwoCoronas matches={matches} />
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="w-20 shrink-0 text-[11px] text-zinc-400">recomputed</span>
@@ -159,5 +162,94 @@ export function RevealAnswer({
         </form>
       </CardBody>
     </Card>
+  );
+}
+
+/* Two coronas (recomputed vs on-chain). When they match they slide together
+   and the eclipse opens; when they don't, the orbits misalign with a red
+   glitch. Driven entirely by the existing `matches` boolean. */
+function TwoCoronas({ matches }: { matches: boolean | null }) {
+  const aligned = matches === true;
+  const broken = matches === false;
+  return (
+    <div className="my-2 grid place-items-center">
+      <svg viewBox="0 0 200 80" className="h-16 w-full max-w-[220px]" aria-hidden>
+        <defs>
+          <radialGradient id="revC" cx="50%" cy="50%" r="50%">
+            <stop offset="50%" stopColor="#22d3ee" stopOpacity="0" />
+            <stop offset="82%" stopColor="#22d3ee" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="revV" cx="50%" cy="50%" r="50%">
+            <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0" />
+            <stop offset="82%" stopColor="#8b5cf6" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="revR" cx="50%" cy="50%" r="50%">
+            <stop offset="50%" stopColor="#f87171" stopOpacity="0" />
+            <stop offset="82%" stopColor="#f87171" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#f87171" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* recomputed corona (left) */}
+        <motion.g
+          className={broken ? "glitch-shift" : undefined}
+          animate={{ x: aligned ? 38 : 0 }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
+        >
+          <circle cx="62" cy="40" r="26" fill={broken ? "url(#revR)" : "url(#revV)"} />
+          <circle
+            cx="62"
+            cy="40"
+            r="15"
+            fill="#04050a"
+            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(139,92,246,0.7)"}
+            strokeWidth="1.4"
+          />
+        </motion.g>
+
+        {/* on-chain corona (right) */}
+        <motion.g
+          className={broken ? "glitch-shift" : undefined}
+          animate={{ x: aligned ? -38 : 0 }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
+        >
+          <circle cx="138" cy="40" r="26" fill={broken ? "url(#revR)" : "url(#revC)"} />
+          <circle
+            cx="138"
+            cy="40"
+            r="15"
+            fill="#04050a"
+            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(34,211,238,0.7)"}
+            strokeWidth="1.4"
+          />
+        </motion.g>
+
+        {/* aligned flash — the eclipse opens */}
+        {aligned && (
+          <motion.circle
+            cx="100"
+            cy="40"
+            r="20"
+            fill="url(#revC)"
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          />
+        )}
+      </svg>
+      <p
+        className={`text-[11px] ${
+          aligned ? "text-cyan-300" : broken ? "text-amber-300" : "text-zinc-500"
+        }`}
+      >
+        {aligned
+          ? "Coronas aligned — the eclipse opens."
+          : broken
+            ? "Orbits misaligned — coronas do not meet."
+            : "Awaiting alignment…"}
+      </p>
+    </div>
   );
 }

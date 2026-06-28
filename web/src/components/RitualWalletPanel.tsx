@@ -5,6 +5,7 @@ import { RITUAL_WALLET, ritualWalletAbi } from "@/abi/RitualWallet";
 import { DEPOSIT_AMOUNT, LOCK_DURATION, type RitualWalletStatus } from "@/lib/ritualWallet";
 import { ritualChain } from "@/config/wagmi";
 import { useWriteTx } from "@/hooks/useWriteTx";
+import { RitualAILens } from "@/components/Observatory";
 import { Badge, Button, Notice, Spinner, TxStatus } from "@/components/ui";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -64,8 +65,21 @@ export function RitualWalletPanel({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Lens fuel · LLM fees</span>
+        <span className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Fuel the Oracle · LLM fees</span>
         {badge}
+      </div>
+
+      {/* The AI oracle lens: charges with golden energy when funded, flickers
+          weakly when not. */}
+      <div className="grid place-items-center rounded-xl border border-violet-400/10 bg-black/30 py-3">
+        <RitualAILens funded={ready === true} size={108} />
+        <span
+          className={`mt-1 text-[11px] uppercase tracking-[0.16em] ${
+            ready ? "text-amber-200/90" : "text-zinc-500"
+          }`}
+        >
+          {ready ? "Oracle funded" : "Lens flickering — fuel required"}
+        </span>
       </div>
 
       {!ready && (

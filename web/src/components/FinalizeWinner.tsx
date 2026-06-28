@@ -18,6 +18,7 @@ import {
   TxStatus,
   Notice,
 } from "@/components/ui";
+import { RewardCore } from "@/components/Observatory";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -78,6 +79,16 @@ export function FinalizeWinner({
         <Notice tone="gold">
           Reward locked in orbit ({formatReward(bounty.reward)}) — released to a single winner.
         </Notice>
+
+        {/* Golden orbit seal: the selected star enters a golden orbit. */}
+        <div className="grid place-items-center rounded-xl border border-amber-300/20 bg-amber-400/5 py-4">
+          <div className={valid ? "star-birth" : undefined}>
+            <RewardCore size={72} charging={valid} />
+          </div>
+          <span className="mt-1 text-[11px] uppercase tracking-[0.16em] text-amber-200/80">
+            {valid ? `Star #${idxNum} entering golden orbit` : "Select a winning star"}
+          </span>
+        </div>
 
         <Field
           label="Winning star (index)"
