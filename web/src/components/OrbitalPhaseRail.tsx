@@ -44,7 +44,7 @@ export function OrbitalPhaseRail({
   return (
     <nav
       aria-label="Observatory phases"
-      className="glass flex h-full flex-col gap-1 rounded-2xl p-3 lg:sticky lg:top-24"
+      className="glass flex h-full flex-col gap-1 rounded-2xl p-3"
     >
       <div className="mb-1 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/65">
         Phase orbit
