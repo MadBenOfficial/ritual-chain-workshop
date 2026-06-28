@@ -40,8 +40,8 @@ export function BountyDetail({
       <CardHeader
         title={
           <span className="flex items-center gap-2">
-            <span className="font-mono text-zinc-500">#{bountyId.toString()}</span>
-            <span className="normal-case text-base text-zinc-100">
+            <span className="font-mono text-[var(--ash)]/45">#{bountyId.toString()}</span>
+            <span className="normal-case text-base text-[var(--ash)]">
               {bounty.title || "Untitled"}
             </span>
           </span>
@@ -56,7 +56,7 @@ export function BountyDetail({
       <CardBody className="space-y-4">
         {/* Two orbital countdown rings: submission + reveal moons. */}
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <div className="rounded-xl border border-violet-400/10 bg-black/30 px-3 py-2">
+          <div className="rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
             <CountdownRing
               progress={commitOpen ? subProgress : 0}
               tone="violet"
@@ -64,7 +64,7 @@ export function BountyDetail({
               sub={commitOpen ? `commit ${formatRelative(bounty.submissionDeadline)}` : "eclipse sealed"}
             />
           </div>
-          <div className="rounded-xl border border-violet-400/10 bg-black/30 px-3 py-2">
+          <div className="rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
             <CountdownRing
               progress={revealOpen ? revProgress : phase === "commit" ? 1 : 0}
               tone="cyan"
@@ -81,8 +81,8 @@ export function BountyDetail({
         </div>
 
         <div>
-          <div className="text-[11px] uppercase tracking-wide text-zinc-500">Rubric</div>
-          <p className="mt-1 whitespace-pre-wrap break-words text-sm text-zinc-200">
+          <div className="text-[11px] uppercase tracking-wide text-[var(--ash)]/45">Rubric</div>
+          <p className="mt-1 whitespace-pre-wrap break-words text-sm text-[var(--ash)]/90">
             {bounty.rubric || "-"}
           </p>
         </div>
@@ -100,7 +100,7 @@ export function BountyDetail({
             value={
               <span>
                 {formatTimestamp(bounty.submissionDeadline)}
-                <span className="ml-1 text-xs text-zinc-500">
+                <span className="ml-1 text-xs text-[var(--ash)]/45">
                   ({formatRelative(bounty.submissionDeadline)})
                 </span>
               </span>
@@ -111,7 +111,7 @@ export function BountyDetail({
             value={
               <span>
                 {formatTimestamp(bounty.revealDeadline)}
-                <span className="ml-1 text-xs text-zinc-500">
+                <span className="ml-1 text-xs text-[var(--ash)]/45">
                   ({formatRelative(bounty.revealDeadline)})
                 </span>
               </span>
@@ -120,7 +120,7 @@ export function BountyDetail({
         </div>
 
         {bounty.finalized && (
-          <div className="rounded-xl bg-amber-400/10 px-3 py-2 text-sm text-amber-200 ring-1 ring-inset ring-amber-300/30">
+          <div className="rounded-xl bg-[var(--amber)]/10 px-3 py-2 text-sm text-[var(--amber)] ring-1 ring-inset ring-amber-300/30">
             Winner fixed in golden orbit — submission{" "}
             <span className="font-mono font-semibold">#{bounty.winnerIndex.toString()}</span>.
             Finalized — reward paid.

@@ -171,7 +171,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
           </Field>
 
           {validation && (title || rubric || reward) ? (
-            <p className="text-xs text-amber-300">{validation}</p>
+            <p className="text-xs text-[var(--amber)]">{validation}</p>
           ) : null}
 
           <Button
@@ -183,24 +183,24 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
           </Button>
 
           {!isConnected && (
-            <p className="text-xs text-zinc-500">Connect your wallet to open a bounty.</p>
+            <p className="text-xs text-[var(--ash)]/45">Connect your wallet to open a bounty.</p>
           )}
 
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
 
           {createdId !== null && (
-            <div className="rise-in space-y-2 rounded-xl border border-amber-300/30 bg-amber-400/5 p-3">
+            <div className="rise-in space-y-2 rounded-xl border border-amber-300/30 bg-[var(--amber)]/[0.06] p-3">
               <div className="flex items-center gap-3">
                 <div className="star-birth shrink-0">
                   <RewardCore size={56} charging />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm text-amber-100">
+                  <p className="text-sm text-[var(--amber)]/90">
                     A new bounty star is born. Reward locked in orbit as golden energy in its core.
                   </p>
-                  <p className="mt-1 text-xs text-amber-200/80">
+                  <p className="mt-1 text-xs text-[var(--amber)]/80">
                     Stellar coordinate{" "}
-                    <span className="font-mono font-semibold text-amber-100">
+                    <span className="font-mono font-semibold text-[var(--amber)]/90">
                       #{createdId.toString()}
                     </span>{" "}
                     · loaded below.

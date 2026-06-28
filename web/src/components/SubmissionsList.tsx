@@ -30,7 +30,7 @@ export function SubmissionsList({
       />
       <CardBody className="space-y-3">
         {count === 0 ? (
-          <p className="text-sm text-zinc-500">No stars in this sky yet.</p>
+          <p className="text-sm text-[var(--ash)]/45">No stars in this sky yet.</p>
         ) : (
           indices.map((i) => (
             <SubmissionRow
@@ -85,20 +85,20 @@ function SubmissionRow({
     <div
       className={`rounded-xl border p-3 transition-colors ${
         isWinner
-          ? "border-amber-300/40 bg-amber-400/5 shadow-[inset_0_0_30px_-8px_rgba(245,196,81,0.6)]"
+          ? "border-[var(--amber)]/45 bg-[var(--amber)]/[0.06] shadow-[inset_0_0_30px_-8px_rgba(245,196,81,0.6)]"
           : recommended
-            ? "border-cyan-400/40 bg-cyan-500/5 shadow-[inset_0_0_24px_-8px_rgba(34,211,238,0.5)]"
+            ? "border-[var(--aurora)]/45 bg-[var(--aurora)]/[0.06] shadow-[inset_0_0_24px_-8px_rgba(185,242,255,0.5)]"
             : revealed
-              ? "border-violet-400/10 bg-black/25"
+              ? "border-[var(--ash)]/10 bg-black/25"
               : "border-white/5 bg-black/40 opacity-80"
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className={`font-mono text-xs ${isWinner ? "text-amber-300 corona-flicker" : recommended ? "text-cyan-300" : "text-zinc-500"}`}>
+          <span className={`font-mono text-xs ${isWinner ? "text-[var(--amber)] corona-flicker" : recommended ? "text-[var(--verdigris)]" : "text-[var(--ash)]/45"}`}>
             ★{index}
           </span>
-          <span className="font-mono text-sm text-zinc-300">
+          <span className="font-mono text-sm text-[var(--ash)]/80">
             {submitter ? shortenAddress(submitter) : isLoading ? "loading…" : "-"}
           </span>
         </div>
@@ -115,18 +115,18 @@ function SubmissionRow({
       </div>
 
       {revealed ? (
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm text-zinc-200">
+        <p className="mt-2 whitespace-pre-wrap break-words text-sm text-[var(--ash)]/90">
           {answer ?? (isLoading ? "" : "-")}
         </p>
       ) : (
-        <p className="mt-2 text-sm italic text-zinc-500">
+        <p className="mt-2 text-sm italic text-[var(--ash)]/45">
           In eclipse — only the commitment corona is public.
         </p>
       )}
 
       {ranking?.reason ? (
-        <p className="mt-2 border-t border-white/5 pt-2 text-xs text-zinc-400">
-          <span className="text-zinc-500">AI: </span>
+        <p className="mt-2 border-t border-white/5 pt-2 text-xs text-[var(--ash)]/60">
+          <span className="text-[var(--ash)]/45">AI: </span>
           {ranking.reason}
         </p>
       ) : null}

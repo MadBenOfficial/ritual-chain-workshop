@@ -30,14 +30,14 @@ export function EclipseStage({ phase, size = "md" }: { phase: StageState; size?:
       <svg viewBox="0 0 240 240" className={cls}>
         <defs>
           <radialGradient id="coronaV" cx="50%" cy="50%" r="50%">
-            <stop offset="55%" stopColor="#8b5cf6" stopOpacity="0" />
-            <stop offset="78%" stopColor="#8b5cf6" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+            <stop offset="55%" stopColor="#B9F2FF" stopOpacity="0" />
+            <stop offset="78%" stopColor="#B9F2FF" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#B9F2FF" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="coronaC" cx="50%" cy="50%" r="50%">
-            <stop offset="55%" stopColor="#22d3ee" stopOpacity="0" />
-            <stop offset="80%" stopColor="#22d3ee" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+            <stop offset="55%" stopColor="#43D9A3" stopOpacity="0" />
+            <stop offset="80%" stopColor="#43D9A3" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#43D9A3" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="solar" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#fde9b8" />
@@ -53,12 +53,12 @@ export function EclipseStage({ phase, size = "md" }: { phase: StageState; size?:
 
         {/* outer thin orbits, always present */}
         <g className="orbit-spin" style={{ transformOrigin: "120px 120px" }}>
-          <circle cx="120" cy="120" r="104" fill="none" stroke="rgba(139,92,246,0.18)" strokeWidth="1" />
-          <circle cx="224" cy="120" r="2.5" fill="#8b5cf6" />
+          <circle cx="120" cy="120" r="104" fill="none" stroke="rgba(185,242,255,0.18)" strokeWidth="1" />
+          <circle cx="224" cy="120" r="2.5" fill="#B9F2FF" />
         </g>
         <g className="orbit-spin-rev" style={{ transformOrigin: "120px 120px" }}>
-          <circle cx="120" cy="120" r="86" fill="none" stroke="rgba(34,211,238,0.16)" strokeWidth="1" />
-          <circle cx="34" cy="120" r="2" fill="#22d3ee" />
+          <circle cx="120" cy="120" r="86" fill="none" stroke="rgba(67,217,163,0.16)" strokeWidth="1" />
+          <circle cx="34" cy="120" r="2" fill="#43D9A3" />
         </g>
 
         <AnimatePresence mode="wait">
@@ -108,8 +108,8 @@ function CommitGlyph() {
   return (
     <g className="eclipse-pulse" style={{ transformOrigin: "120px 120px" }}>
       <circle cx="120" cy="120" r="62" fill="url(#coronaV)" />
-      <circle cx="120" cy="120" r="40" fill="#04050a" stroke="rgba(139,92,246,0.5)" strokeWidth="1.5" />
-      <circle cx="120" cy="120" r="40" fill="none" stroke="rgba(34,211,238,0.35)" strokeWidth="0.5" className="corona-flicker" />
+      <circle cx="120" cy="120" r="40" fill="#04050a" stroke="rgba(185,242,255,0.5)" strokeWidth="1.5" />
+      <circle cx="120" cy="120" r="40" fill="none" stroke="rgba(67,217,163,0.35)" strokeWidth="0.5" className="corona-flicker" />
     </g>
   );
 }
@@ -119,14 +119,14 @@ function RevealGlyph() {
   return (
     <g>
       <circle cx="120" cy="120" r="58" fill="url(#coronaC)" className="corona-flicker" />
-      <circle cx="120" cy="120" r="34" fill="#070b16" stroke="rgba(34,211,238,0.55)" strokeWidth="1.5" />
+      <circle cx="120" cy="120" r="34" fill="#070b16" stroke="rgba(67,217,163,0.55)" strokeWidth="1.5" />
       {/* retreating moon */}
       <motion.circle
         cx="150"
         cy="104"
         r="34"
         fill="#04050a"
-        stroke="rgba(139,92,246,0.4)"
+        stroke="rgba(185,242,255,0.4)"
         strokeWidth="1"
         opacity="0.92"
         initial={{ cx: 120, cy: 120 }}
@@ -151,7 +151,7 @@ function ConstellationGlyph() {
       <polyline
         points={stars.map((s) => s.join(",")).join(" ")}
         fill="none"
-        stroke="rgba(34,211,238,0.55)"
+        stroke="rgba(67,217,163,0.55)"
         strokeWidth="1"
         className="constellation-line"
       />
@@ -161,15 +161,15 @@ function ConstellationGlyph() {
           cx={x}
           cy={y}
           r={i === 1 ? 3.2 : 2.4}
-          fill={i === 1 ? "#f5c451" : "#22d3ee"}
+          fill={i === 1 ? "#f5c451" : "#43D9A3"}
           className="twinkle"
           style={{ animationDelay: `${i * 0.4}s` }}
         />
       ))}
       {/* scanning lens */}
       <g className="orbit-spin" style={{ transformOrigin: "120px 120px" }}>
-        <circle cx="120" cy="44" r="10" fill="none" stroke="rgba(139,92,246,0.8)" strokeWidth="1.5" />
-        <circle cx="120" cy="44" r="3" fill="rgba(139,92,246,0.8)" />
+        <circle cx="120" cy="44" r="10" fill="none" stroke="rgba(185,242,255,0.8)" strokeWidth="1.5" />
+        <circle cx="120" cy="44" r="3" fill="rgba(185,242,255,0.8)" />
       </g>
     </g>
   );
@@ -239,7 +239,7 @@ function urgencyStroke(progress: number, tone: RingTone): { stroke: string; crit
   const critical = progress <= 0.12;
   if (critical) return { stroke: "#f5c451", critical, low };
   if (low) return { stroke: "#fbbf24", critical, low };
-  const stroke = tone === "violet" ? "#8b5cf6" : tone === "gold" ? "#f5c451" : "#22d3ee";
+  const stroke = tone === "violet" ? "#B9F2FF" : tone === "gold" ? "#f5c451" : "#43D9A3";
   return { stroke, critical, low };
 }
 
@@ -301,9 +301,9 @@ export function CountdownRing({
         />
       </svg>
       <div>
-        <div className="text-sm font-medium text-zinc-100">{label}</div>
+        <div className="text-sm font-medium text-[var(--ash)]">{label}</div>
         {sub ? (
-          <div className={`text-xs ${critical ? "text-amber-300" : low ? "text-amber-200/80" : "text-zinc-500"}`}>
+          <div className={`text-xs ${critical ? "text-[var(--amber)]" : low ? "text-[var(--amber)]/80" : "text-[var(--ash)]/45"}`}>
             {sub}
             {critical ? " · critical" : low ? " · low" : ""}
           </div>
@@ -347,9 +347,9 @@ export function PhaseRail({
               className={[
                 "grid h-3.5 w-3.5 place-items-center rounded-full ring-1 transition-all",
                 n.status === "active"
-                  ? "bg-cyan-400 ring-cyan-300/60 shadow-[0_0_14px_3px_rgba(34,211,238,0.8)]"
+                  ? "bg-[var(--aurora)] ring-[var(--aurora)]/60 shadow-[0_0_14px_3px_rgba(67,217,163,0.8)]"
                   : n.status === "done"
-                    ? "bg-violet-400/80 ring-violet-300/40 shadow-[0_0_8px_1px_rgba(139,92,246,0.5)]"
+                    ? "bg-[var(--verdigris)]/80 ring-[var(--verdigris)]/40 shadow-[0_0_8px_1px_rgba(185,242,255,0.5)]"
                     : "bg-white/10 ring-white/10",
               ].join(" ")}
             />
@@ -357,10 +357,10 @@ export function PhaseRail({
               className={[
                 "whitespace-nowrap text-[10px] uppercase tracking-[0.12em]",
                 n.status === "active"
-                  ? "text-cyan-200"
+                  ? "text-[var(--aurora)]"
                   : n.status === "done"
-                    ? "text-violet-200/80"
-                    : "text-zinc-600",
+                    ? "text-[var(--verdigris)]/80"
+                    : "text-[var(--ash)]/35",
               ].join(" ")}
             >
               {n.label}
@@ -370,7 +370,7 @@ export function PhaseRail({
             <span
               className={[
                 "h-px w-5",
-                n.status === "done" ? "bg-violet-400/40" : "bg-white/10",
+                n.status === "done" ? "bg-[var(--verdigris)]/40" : "bg-white/10",
               ].join(" ")}
             />
           )}
@@ -403,12 +403,12 @@ export function CopyHash({
           /* clipboard unavailable */
         }
       }}
-      className={`group inline-flex items-center gap-1.5 rounded-lg border border-violet-400/15 bg-black/30 px-2 py-1 font-mono text-[11px] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-200 ${className}`}
+      className={`group inline-flex items-center gap-1.5 rounded-lg border border-[var(--ash)]/12 bg-black/30 px-2 py-1 font-mono text-[11px] text-[var(--ash)]/80 transition-colors hover:border-[var(--aurora)]/45 hover:text-[var(--aurora)] ${className}`}
       title="Copy"
     >
       <span className="break-all">{value}</span>
       <span
-        className={`transition-all ${copied ? "text-cyan-300" : "text-zinc-500 group-hover:text-cyan-300"}`}
+        className={`transition-all ${copied ? "text-[var(--verdigris)]" : "text-[var(--ash)]/45 group-hover:text-[var(--verdigris)]"}`}
       >
         {copied ? "copied ✓" : "copy"}
       </span>
@@ -430,7 +430,7 @@ export function StageFrame({
     <div className="relative flex flex-col items-center gap-3 rounded-2xl glass px-5 py-6">
       {children}
       {caption ? (
-        <p className="max-w-md text-center text-xs leading-relaxed text-zinc-400">
+        <p className="max-w-md text-center text-xs leading-relaxed text-[var(--ash)]/60">
           {caption}
         </p>
       ) : null}
@@ -451,13 +451,13 @@ export function SaltMoon({ size = 28, generated = false }: { size?: number; gene
         cy="24"
         r="14"
         fill="#0a0f1f"
-        stroke={generated ? "rgba(139,92,246,0.85)" : "rgba(120,130,160,0.35)"}
+        stroke={generated ? "rgba(185,242,255,0.85)" : "rgba(120,130,160,0.35)"}
         strokeWidth="1.5"
         className={generated ? "corona-flicker" : undefined}
       />
       {/* craters */}
-      <circle cx="20" cy="20" r="2" fill="rgba(139,92,246,0.25)" />
-      <circle cx="28" cy="27" r="3" fill="rgba(34,211,238,0.18)" />
+      <circle cx="20" cy="20" r="2" fill="rgba(185,242,255,0.25)" />
+      <circle cx="28" cy="27" r="3" fill="rgba(67,217,163,0.18)" />
       <circle cx="26" cy="18" r="1.4" fill="rgba(238,241,251,0.2)" />
     </svg>
   );
@@ -468,13 +468,13 @@ export function CommitmentCorona({ size = 36, active = true }: { size?: number; 
     <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden>
       <defs>
         <radialGradient id="ccGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="52%" stopColor="#22d3ee" stopOpacity="0" />
-          <stop offset="80%" stopColor="#22d3ee" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+          <stop offset="52%" stopColor="#43D9A3" stopOpacity="0" />
+          <stop offset="80%" stopColor="#43D9A3" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#43D9A3" stopOpacity="0" />
         </radialGradient>
       </defs>
       <circle cx="32" cy="32" r="28" fill="url(#ccGrad)" className={active ? "corona-flicker" : undefined} />
-      <circle cx="32" cy="32" r="16" fill="#04050a" stroke="rgba(34,211,238,0.6)" strokeWidth="1.4" />
+      <circle cx="32" cy="32" r="16" fill="#04050a" stroke="rgba(67,217,163,0.6)" strokeWidth="1.4" />
     </svg>
   );
 }

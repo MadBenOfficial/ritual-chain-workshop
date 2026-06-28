@@ -85,11 +85,11 @@ export function FinalizeWinner({
         </Notice>
 
         {/* Golden orbit seal: the selected star enters a golden orbit. */}
-        <div className="grid place-items-center rounded-xl border border-amber-300/20 bg-amber-400/5 py-4">
+        <div className="grid place-items-center rounded-xl border border-[var(--amber)]/25 bg-[var(--amber)]/[0.06] py-4">
           <div className={valid ? "star-birth" : undefined}>
             <RewardCore size={72} charging={valid} />
           </div>
-          <span className="mt-1 text-[11px] uppercase tracking-[0.16em] text-amber-200/80">
+          <span className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--amber)]/80">
             {valid ? `Star #${idxNum} entering golden orbit` : "Select a winning star"}
           </span>
         </div>
@@ -112,7 +112,7 @@ export function FinalizeWinner({
         </Field>
 
         {winnerIndex !== "" && !valid && (
-          <p className="text-xs text-amber-300">
+          <p className="text-xs text-[var(--amber)]">
             Index must be between 0 and {Math.max(count - 1, 0)}.
           </p>
         )}

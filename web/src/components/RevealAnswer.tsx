@@ -128,25 +128,25 @@ export function RevealAnswer({
               <TwoCoronas matches={matches} />
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="w-20 shrink-0 text-[11px] text-zinc-400">recomputed</span>
+                  <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/60">recomputed</span>
                   <CopyHash value={preview} />
                 </div>
                 {onChainCommitment ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-20 shrink-0 text-[11px] text-zinc-400">on-chain</span>
+                    <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/60">on-chain</span>
                     <CopyHash value={onChainCommitment} />
                   </div>
                 ) : null}
               </div>
               {matches === false ? (
-                <div className="mt-2 text-amber-300">
+                <div className="mt-2 text-[var(--amber)]">
                   These coronas don&apos;t align — this answer + salt does NOT match your on-chain
                   commitment. Revealing now would revert (CoronaMismatch). Use the exact answer and
                   salt you committed with.
                 </div>
               ) : null}
               {matches === true ? (
-                <div className="mt-2 text-cyan-300">Coronas aligned — matches your commitment ✓</div>
+                <div className="mt-2 text-[var(--verdigris)]">Coronas aligned — matches your commitment ✓</div>
               ) : null}
             </Notice>
           ) : null}
@@ -158,9 +158,9 @@ export function RevealAnswer({
           >
             {tx.isBusy ? "Opening the eclipse…" : "Open the eclipse (reveal)"}
           </Button>
-          {!isConnected && <p className="text-xs text-zinc-500">Connect your wallet to reveal.</p>}
+          {!isConnected && <p className="text-xs text-[var(--ash)]/45">Connect your wallet to reveal.</p>}
           {!validSalt && salt ? (
-            <p className="text-xs text-amber-300">Salt must be a 32-byte hex value (0x + 64 chars).</p>
+            <p className="text-xs text-[var(--amber)]">Salt must be a 32-byte hex value (0x + 64 chars).</p>
           ) : null}
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
         </form>
@@ -180,14 +180,14 @@ function TwoCoronas({ matches }: { matches: boolean | null }) {
       <svg viewBox="0 0 200 80" className="h-16 w-full max-w-[220px]" aria-hidden>
         <defs>
           <radialGradient id="revC" cx="50%" cy="50%" r="50%">
-            <stop offset="50%" stopColor="#22d3ee" stopOpacity="0" />
-            <stop offset="82%" stopColor="#22d3ee" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
+            <stop offset="50%" stopColor="#43D9A3" stopOpacity="0" />
+            <stop offset="82%" stopColor="#43D9A3" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#43D9A3" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="revV" cx="50%" cy="50%" r="50%">
-            <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0" />
-            <stop offset="82%" stopColor="#8b5cf6" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0" />
+            <stop offset="50%" stopColor="#B9F2FF" stopOpacity="0" />
+            <stop offset="82%" stopColor="#B9F2FF" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#B9F2FF" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="revR" cx="50%" cy="50%" r="50%">
             <stop offset="50%" stopColor="#f87171" stopOpacity="0" />
@@ -208,7 +208,7 @@ function TwoCoronas({ matches }: { matches: boolean | null }) {
             cy="40"
             r="15"
             fill="#04050a"
-            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(139,92,246,0.7)"}
+            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(185,242,255,0.7)"}
             strokeWidth="1.4"
           />
         </motion.g>
@@ -225,7 +225,7 @@ function TwoCoronas({ matches }: { matches: boolean | null }) {
             cy="40"
             r="15"
             fill="#04050a"
-            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(34,211,238,0.7)"}
+            stroke={broken ? "rgba(248,113,113,0.8)" : "rgba(67,217,163,0.7)"}
             strokeWidth="1.4"
           />
         </motion.g>
@@ -245,7 +245,7 @@ function TwoCoronas({ matches }: { matches: boolean | null }) {
       </svg>
       <p
         className={`text-[11px] ${
-          aligned ? "text-cyan-300" : broken ? "text-amber-300" : "text-zinc-500"
+          aligned ? "text-[var(--verdigris)]" : broken ? "text-[var(--amber)]" : "text-[var(--ash)]/45"
         }`}
       >
         {aligned

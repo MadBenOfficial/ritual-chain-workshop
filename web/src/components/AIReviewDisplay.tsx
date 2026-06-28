@@ -28,7 +28,7 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
             {parsed.ranking.length > 0 && (
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white/5 text-xs uppercase tracking-wide text-zinc-400">
+                  <thead className="bg-white/5 text-xs uppercase tracking-wide text-[var(--ash)]/60">
                     <tr>
                       <th className="px-3 py-2">#</th>
                       <th className="px-3 py-2">Score</th>
@@ -43,18 +43,18 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
                           key={r.index}
                           className={`border-t border-white/5 transition-colors ${
                             r.index === parsed.winnerIndex
-                              ? "bg-cyan-500/10 shadow-[inset_0_0_24px_-6px_rgba(34,211,238,0.6)]"
+                              ? "bg-[var(--aurora)]/10 shadow-[inset_0_0_24px_-6px_rgba(185,242,255,0.6)]"
                               : "opacity-70"
                           }`}
                         >
                           <td className="px-3 py-2 font-mono">
                             {r.index}
                             {r.index === parsed.winnerIndex && (
-                              <span className="ml-1 text-cyan-300 corona-flicker">★</span>
+                              <span className="ml-1 text-[var(--verdigris)] corona-flicker">★</span>
                             )}
                           </td>
                           <td className="px-3 py-2 font-medium">{r.score}</td>
-                          <td className="px-3 py-2 text-zinc-300">{r.reason}</td>
+                          <td className="px-3 py-2 text-[var(--ash)]/80">{r.reason}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -63,13 +63,13 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
             )}
 
             {parsed.summary && (
-              <div className="rounded-xl bg-black/20 px-3 py-2 text-sm text-zinc-200">
-                <span className="text-zinc-500">Summary: </span>
+              <div className="rounded-xl bg-black/20 px-3 py-2 text-sm text-[var(--ash)]/90">
+                <span className="text-[var(--ash)]/45">Summary: </span>
                 {parsed.summary}
               </div>
             )}
 
-            <p className="text-center text-[11px] uppercase tracking-[0.16em] text-cyan-200/70">
+            <p className="text-center text-[11px] uppercase tracking-[0.16em] text-[var(--aurora)]/70">
               AI recommends. Human aligns.
             </p>
           </>
@@ -78,7 +78,7 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
             <Notice tone="amber">
               Couldn&apos;t parse the AI review as JSON. Showing the raw response.
             </Notice>
-            <pre className="max-h-72 overflow-auto rounded-xl bg-black/40 p-3 font-mono text-xs text-zinc-300 whitespace-pre-wrap break-words">
+            <pre className="max-h-72 overflow-auto rounded-xl bg-black/40 p-3 font-mono text-xs text-[var(--ash)]/80 whitespace-pre-wrap break-words">
               {raw}
             </pre>
           </>

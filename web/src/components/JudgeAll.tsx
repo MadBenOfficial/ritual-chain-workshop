@@ -176,7 +176,7 @@ export function JudgeAll({
             are dim eclipses outside the constellation. */}
         <ConstellationPreview total={count} revealed={revealedCount} scanning={busy} />
 
-        <div className="rounded-xl border border-cyan-400/15 bg-cyan-500/[0.04] px-3 py-2 text-xs text-cyan-200/90">
+        <div className="rounded-xl border border-[var(--aurora)]/20 bg-[var(--aurora)]/[0.05] px-3 py-2 text-xs text-[var(--aurora)]/90">
           Batch judging only. No one-by-one AI calls.
         </div>
 
@@ -219,7 +219,7 @@ function JudgeSteps({ active }: { active: boolean }) {
   }, [active]);
 
   return (
-    <div className="space-y-1.5 rounded-xl border border-violet-400/15 bg-black/30 px-3 py-3">
+    <div className="space-y-1.5 rounded-xl border border-[var(--ash)]/12 bg-black/30 px-3 py-3">
       {JUDGE_STEPS.map((label, i) => {
         const done = i < step;
         const current = i === step;
@@ -229,9 +229,9 @@ function JudgeSteps({ active }: { active: boolean }) {
               className={[
                 "grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full text-[8px] ring-1 transition-all",
                 current
-                  ? "bg-cyan-400 text-black ring-cyan-300/60 shadow-[0_0_10px_2px_rgba(34,211,238,0.7)]"
+                  ? "bg-[var(--aurora)] text-black ring-[var(--aurora)]/60 shadow-[0_0_10px_2px_rgba(185,242,255,0.7)]"
                   : done
-                    ? "bg-violet-400/80 text-black ring-violet-300/40"
+                    ? "bg-[var(--verdigris)]/80 text-black ring-[var(--verdigris)]/40"
                     : "bg-white/10 ring-white/10",
               ].join(" ")}
             >
@@ -239,7 +239,7 @@ function JudgeSteps({ active }: { active: boolean }) {
             </span>
             <span
               className={
-                current ? "text-cyan-200" : done ? "text-violet-200/80" : "text-zinc-600"
+                current ? "text-[var(--aurora)]" : done ? "text-[var(--verdigris)]/80" : "text-[var(--ash)]/35"
               }
             >
               {label}
@@ -268,13 +268,13 @@ function ConstellationPreview({
     return [100 + 42 * Math.cos(a), 60 + 30 * Math.sin(a)];
   });
   return (
-    <div className="grid place-items-center rounded-xl border border-violet-400/10 bg-black/30 py-3">
+    <div className="grid place-items-center rounded-xl border border-[var(--ash)]/10 bg-black/30 py-3">
       <svg viewBox="0 0 200 120" className="h-28 w-full max-w-[260px]" aria-hidden>
         {revealed > 1 && (
           <polygon
             points={pts.map((p) => p.join(",")).join(" ")}
-            fill="rgba(34,211,238,0.05)"
-            stroke="rgba(34,211,238,0.5)"
+            fill="rgba(185,242,255,0.06)"
+            stroke="rgba(185,242,255,0.5)"
             strokeWidth="1"
             className="constellation-line"
           />
@@ -285,7 +285,7 @@ function ConstellationPreview({
             cx={x}
             cy={y}
             r="3"
-            fill="#22d3ee"
+            fill="#43D9A3"
             className="twinkle"
             style={{ animationDelay: `${i * 0.3}s` }}
           />
@@ -304,12 +304,12 @@ function ConstellationPreview({
         ))}
         {scanning && (
           <g className="orbit-spin" style={{ transformOrigin: "100px 60px" }}>
-            <line x1="100" y1="60" x2="100" y2="14" stroke="rgba(139,92,246,0.5)" strokeWidth="1" />
-            <circle cx="100" cy="14" r="5" fill="none" stroke="rgba(139,92,246,0.85)" strokeWidth="1.5" />
+            <line x1="100" y1="60" x2="100" y2="14" stroke="rgba(185,242,255,0.5)" strokeWidth="1" />
+            <circle cx="100" cy="14" r="5" fill="none" stroke="rgba(185,242,255,0.85)" strokeWidth="1.5" />
           </g>
         )}
       </svg>
-      <span className="text-[11px] text-zinc-500">
+      <span className="text-[11px] text-[var(--ash)]/45">
         {revealed} revealed in the constellation · {dim} excluded
       </span>
     </div>

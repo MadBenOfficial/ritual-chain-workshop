@@ -61,7 +61,7 @@ export function LoadBountyPanel({
 
         {recentIds.length > 0 && (
           <div>
-            <div className="mb-1 text-[11px] uppercase tracking-wide text-zinc-500">
+            <div className="mb-1 text-[11px] uppercase tracking-wide text-[var(--ash)]/45">
               Recent
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -74,8 +74,8 @@ export function LoadBountyPanel({
                   }}
                   className={`rounded-lg px-2 py-1 font-mono text-xs ring-1 ring-inset transition-colors ${
                     selectedId?.toString() === id
-                      ? "bg-cyan-500/20 text-cyan-200 ring-cyan-400/40"
-                      : "bg-black/20 text-zinc-300 ring-violet-400/15 hover:bg-white/10"
+                      ? "bg-[var(--aurora)]/15 text-[var(--aurora)] ring-[var(--aurora)]/40"
+                      : "bg-black/20 text-[var(--ash)]/80 ring-[var(--ash)]/15 hover:bg-white/10"
                   }`}
                 >
                   #{id}
