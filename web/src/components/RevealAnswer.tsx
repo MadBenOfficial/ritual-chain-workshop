@@ -9,6 +9,7 @@ import { ritualChain } from "@/config/wagmi";
 import { canReveal, computeCommitment, recallCommitment, type Bounty } from "@/lib/bounty";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { CopyHash } from "@/components/Observatory";
+import { pushEvent } from "@/hooks/useEventStrip";
 import { motion } from "framer-motion";
 import { Card, CardHeader, CardBody, Field, Textarea, Input, Button, TxStatus, Notice } from "@/components/ui";
 
@@ -35,7 +36,10 @@ export function RevealAnswer({
   const [answerEdit, setAnswerEdit] = useState<string | null>(null);
   const [saltEdit, setSaltEdit] = useState<string | null>(null);
   const now = useNow();
-  const tx = useWriteTx(() => onRevealed());
+  const tx = useWriteTx(() => {
+    pushEvent({ kind: "reveal", label: "Answer revealed", detail: `bounty #${bountyId.toString()}` });
+    onRevealed();
+  });
 
   const stored = address ? recallCommitment(bountyId, address) : null;
   const answer = answerEdit ?? stored?.answer ?? "";

@@ -1,13 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  /* Eclipse Observatory palette */
-  --background: #04050a; /* deep black */
-  --night: #0a0f1f; /* night blue */
-  --foreground: #eef1fb; /* lunar white */
-  --violet: #8b5cf6; /* ritual violet */
-  --cyan: #22d3ee; /* stellar cyan */
-  --gold: #f5c451; /* solar gold */
+  /* ===== Eclipse Bounty Judge — observatory palette ===== */
+  --obsidian: #070707; /* base black */
+  --graphite: #111315; /* deep graphite */
+  --smoked: rgba(255, 255, 255, 0.06); /* smoked glass */
+  --ash: #d8d1c5; /* soft ash (primary text) */
+
+  --amber: #ffb84d; /* solar amber — reward / winner / finalize */
+  --verdigris: #43d9a3; /* verified / valid reveal / success */
+  --copper: #b86f45; /* deadlines / countdown warn / owner / transitions */
+  --aurora: #b9f2ff; /* Ritual AI / batch judging / processing */
+  --ember: #ff4d3d; /* errors / wrong network / mismatch */
+  --eclipse: #1a2433; /* hidden answers / sealed commitments / commit phase */
+
+  --background: var(--obsidian);
+  --foreground: var(--ash);
 }
 
 @theme inline {
@@ -31,9 +39,9 @@ body {
 }
 
 /* ---------------------------------------------------------- Atmosphere ---
-   Layered observatory sky: eclipse glow (violet/cyan), night-blue depth,
-   a faint astronomical grid, and very subtle star dust. Fixed so it reads
-   as the room the whole app sits inside. Kept low-opacity so panels float. */
+   Observatory built of smoked glass, dark metal and old solar light. The
+   existing background stays; these are translucent layers on top: a warm
+   amber sun low on the horizon, a cold eclipse-blue depth, faint grid + dust. */
 
 body::before {
   content: "";
@@ -42,315 +50,122 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(48rem 48rem at 78% -8%, rgba(139, 92, 246, 0.18), transparent 60%),
-    radial-gradient(42rem 42rem at 12% 4%, rgba(34, 211, 238, 0.12), transparent 58%),
-    radial-gradient(60rem 50rem at 50% 120%, rgba(10, 15, 31, 0.9), transparent 70%),
-    linear-gradient(180deg, #04050a 0%, #060912 55%, #04050a 100%);
+    radial-gradient(50rem 40rem at 80% -10%, rgba(255, 184, 77, 0.12), transparent 60%),
+    radial-gradient(46rem 46rem at 8% 6%, rgba(26, 36, 51, 0.55), transparent 60%),
+    radial-gradient(60rem 50rem at 50% 122%, rgba(17, 19, 21, 0.95), transparent 72%),
+    linear-gradient(180deg, #070707 0%, #0a0c0e 55%, #070707 100%);
 }
 
-/* astronomical grid + star dust */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -2;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.42;
   background-image:
-    linear-gradient(to right, rgba(139, 92, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(34, 211, 238, 0.04) 1px, transparent 1px),
-    radial-gradient(1px 1px at 20% 30%, rgba(238, 241, 251, 0.7), transparent),
-    radial-gradient(1px 1px at 65% 18%, rgba(238, 241, 251, 0.5), transparent),
-    radial-gradient(1.5px 1.5px at 82% 62%, rgba(245, 196, 81, 0.55), transparent),
-    radial-gradient(1px 1px at 40% 78%, rgba(34, 211, 238, 0.6), transparent),
-    radial-gradient(1px 1px at 88% 38%, rgba(238, 241, 251, 0.45), transparent),
-    radial-gradient(1px 1px at 12% 60%, rgba(238, 241, 251, 0.4), transparent);
+    linear-gradient(to right, rgba(216, 209, 197, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(216, 209, 197, 0.03) 1px, transparent 1px),
+    radial-gradient(1px 1px at 22% 28%, rgba(216, 209, 197, 0.7), transparent),
+    radial-gradient(1px 1px at 67% 16%, rgba(185, 242, 255, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 82% 60%, rgba(255, 184, 77, 0.55), transparent),
+    radial-gradient(1px 1px at 38% 76%, rgba(67, 217, 163, 0.45), transparent),
+    radial-gradient(1px 1px at 90% 36%, rgba(216, 209, 197, 0.4), transparent),
+    radial-gradient(1px 1px at 12% 62%, rgba(216, 209, 197, 0.4), transparent);
   background-size:
-    44px 44px,
-    44px 44px,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%;
-  animation: drift 120s linear infinite;
+    52px 52px, 52px 52px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: drift 140s linear infinite;
 }
 
 @keyframes drift {
-  from {
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0;
-  }
   to {
-    background-position:
-      44px 44px,
-      44px 44px,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0;
+    background-position: 52px 52px, 52px 52px, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
   }
+}
+
+/* ---------------------------------------------------------- Primitives -- */
+
+.glass {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(216, 209, 197, 0.1);
+  box-shadow:
+    0 1px 0 0 rgba(216, 209, 197, 0.05) inset,
+    0 24px 60px -34px rgba(0, 0, 0, 0.95);
+}
+.glass-strong {
+  background: linear-gradient(160deg, rgba(17, 19, 21, 0.86), rgba(7, 7, 7, 0.78));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(216, 209, 197, 0.12);
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.95);
+}
+.focus-glow:focus {
+  outline: none;
+  border-color: rgba(255, 184, 77, 0.6);
+  box-shadow: 0 0 0 1px rgba(255, 184, 77, 0.35), 0 0 18px -4px rgba(255, 184, 77, 0.4);
 }
 
 /* ---------------------------------------------------------- Animations -- */
 
-@keyframes spin-slow {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes spin-reverse {
-  to {
-    transform: rotate(-360deg);
-  }
-}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes spin-reverse { to { transform: rotate(-360deg); } }
 @keyframes eclipse-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
-@keyframes corona-flicker {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes dash-flow {
-  to {
-    stroke-dashoffset: -200;
-  }
-}
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.orbit-spin {
-  animation: spin-slow 48s linear infinite;
-  transform-origin: center;
-}
-.orbit-spin-rev {
-  animation: spin-reverse 72s linear infinite;
-  transform-origin: center;
-}
-.eclipse-pulse {
-  animation: eclipse-pulse 6s ease-in-out infinite;
-}
-.corona-flicker {
-  animation: corona-flicker 4s ease-in-out infinite;
-}
-.twinkle {
-  animation: twinkle 3.2s ease-in-out infinite;
-}
-.constellation-line {
-  stroke-dasharray: 4 6;
-  animation: dash-flow 6s linear infinite;
-}
-.rise-in {
-  animation: rise 0.5s ease-out both;
-}
-
-/* ------------------------------------------------ Stage-specific motion -- */
-
-/* wrong-network: the eclipse vibrates with a red border */
+@keyframes corona-flicker { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+@keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+@keyframes dash-flow { to { stroke-dashoffset: -200; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes vibrate {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  20% {
-    transform: translate(-1.5px, 1px);
-  }
-  40% {
-    transform: translate(1.5px, -1px);
-  }
-  60% {
-    transform: translate(-1px, -1.5px);
-  }
-  80% {
-    transform: translate(1px, 1.5px);
-  }
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1.5px, 1px); }
+  40% { transform: translate(1.5px, -1px); }
+  60% { transform: translate(-1px, -1.5px); }
+  80% { transform: translate(1px, 1.5px); }
 }
-.eclipse-vibrate {
-  animation: vibrate 0.35s linear infinite;
-}
-
-/* a new bounty star being born */
 @keyframes star-birth {
-  0% {
-    opacity: 0;
-    transform: scale(0.1);
-    filter: blur(3px);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.18);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.1); filter: blur(3px); }
+  60% { opacity: 1; transform: scale(1.18); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); }
 }
-.star-birth {
-  animation: star-birth 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  transform-origin: center;
-}
-
-/* golden reward energy charging into a core */
 @keyframes reward-charge {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.06);
-  }
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.06); }
 }
-.reward-charge {
-  animation: reward-charge 2.6s ease-in-out infinite;
-  transform-origin: center;
-}
-
-/* mismatch red glitch for misaligned reveal coronas */
 @keyframes glitch-shift {
-  0%,
-  100% {
-    transform: translateX(0);
-    opacity: 0.85;
-  }
-  25% {
-    transform: translateX(-2px);
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(2px);
-    opacity: 0.7;
-  }
-  75% {
-    transform: translateX(-1px);
-    opacity: 1;
-  }
+  0%, 100% { transform: translateX(0); opacity: 0.85; }
+  25% { transform: translateX(-2px); opacity: 1; }
+  50% { transform: translateX(2px); opacity: 0.7; }
+  75% { transform: translateX(-1px); opacity: 1; }
 }
-.glitch-shift {
-  animation: glitch-shift 0.5s steps(2, end) infinite;
-}
-
-/* lens "powering up" sweep when funded */
-@keyframes lens-charge {
-  0% {
-    stroke-dashoffset: 0;
-  }
-  100% {
-    stroke-dashoffset: -160;
-  }
-}
-.lens-charge {
-  stroke-dasharray: 6 8;
-  animation: lens-charge 3s linear infinite;
-}
-
-/* weak flicker for an under-funded lens */
+@keyframes lens-charge { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -160; } }
 @keyframes lens-flicker {
-  0%,
-  100% {
-    opacity: 0.25;
-  }
-  10% {
-    opacity: 0.5;
-  }
-  12% {
-    opacity: 0.2;
-  }
-  40% {
-    opacity: 0.45;
-  }
-  42% {
-    opacity: 0.18;
-  }
-  70% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 0.25; } 10% { opacity: 0.5; } 12% { opacity: 0.2; }
+  40% { opacity: 0.45; } 42% { opacity: 0.18; } 70% { opacity: 0.5; }
 }
-.lens-flicker {
-  animation: lens-flicker 2.4s ease-in-out infinite;
-}
+@keyframes power-up { 0% { opacity: 0; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes event-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-/* connect: a light-line entering and powering the eclipse */
-@keyframes power-up {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-.power-up {
-  animation: power-up 1.2s ease-out both;
-}
+.orbit-spin { animation: spin-slow 48s linear infinite; transform-origin: center; }
+.orbit-spin-rev { animation: spin-reverse 72s linear infinite; transform-origin: center; }
+.eclipse-pulse { animation: eclipse-pulse 6s ease-in-out infinite; }
+.corona-flicker { animation: corona-flicker 4s ease-in-out infinite; }
+.twinkle { animation: twinkle 3.2s ease-in-out infinite; }
+.constellation-line { stroke-dasharray: 4 6; animation: dash-flow 6s linear infinite; }
+.rise-in { animation: rise 0.5s ease-out both; }
+.eclipse-vibrate { animation: vibrate 0.35s linear infinite; }
+.star-birth { animation: star-birth 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; transform-origin: center; }
+.reward-charge { animation: reward-charge 2.6s ease-in-out infinite; transform-origin: center; }
+.glitch-shift { animation: glitch-shift 0.5s steps(2, end) infinite; }
+.lens-charge { stroke-dasharray: 6 8; animation: lens-charge 3s linear infinite; }
+.lens-flicker { animation: lens-flicker 2.4s ease-in-out infinite; }
+.power-up { animation: power-up 1.2s ease-out both; }
 
-/* glass panel + glow helpers used by the UI primitives */
-.glass-panel {
-  background: linear-gradient(
-    160deg,
-    rgba(18, 22, 40, 0.72),
-    rgba(8, 11, 22, 0.6)
-  );
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(139, 92, 246, 0.16);
-  box-shadow:
-    0 1px 0 0 rgba(238, 241, 251, 0.05) inset,
-    0 24px 60px -30px rgba(0, 0, 0, 0.9);
-}
-.focus-glow:focus {
-  outline: none;
-  border-color: rgba(34, 211, 238, 0.6);
-  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 18px -4px rgba(34, 211, 238, 0.45);
-}
+/* thin scrollbars inside drawers/rails */
+.thin-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.thin-scroll::-webkit-scrollbar-thumb { background: rgba(216, 209, 197, 0.18); border-radius: 9999px; }
 
-/* respect reduced motion: freeze every animated element */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  body::after {
-    animation: none !important;
-    transition: none !important;
-  }
+  *, body::after { animation: none !important; transition: none !important; }
 }

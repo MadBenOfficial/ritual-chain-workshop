@@ -327,7 +327,7 @@ export function PhaseRail({
   return (
     <nav
       aria-label="Observatory phases"
-      className="flex items-center gap-1 overflow-x-auto rounded-2xl glass-panel px-3 py-2"
+      className="flex items-center gap-1 overflow-x-auto rounded-2xl glass px-3 py-2"
     >
       {nodes.map((n, i) => (
         <div key={n.key} className="flex shrink-0 items-center">
@@ -427,7 +427,7 @@ export function StageFrame({
   caption?: ReactNode;
 }) {
   return (
-    <div className="relative flex flex-col items-center gap-3 rounded-2xl glass-panel px-5 py-6">
+    <div className="relative flex flex-col items-center gap-3 rounded-2xl glass px-5 py-6">
       {children}
       {caption ? (
         <p className="max-w-md text-center text-xs leading-relaxed text-zinc-400">
@@ -566,3 +566,4 @@ export function RewardCore({ size = 64, charging = true }: { size?: number; char
     </svg>
   );
 }
+

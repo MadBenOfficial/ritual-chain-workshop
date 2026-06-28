@@ -2,42 +2,54 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
-import { WalletConnect } from "@/components/WalletConnect";
+import { AppShell, TopCommandBar } from "@/components/AppShell";
+import { OrbitalPhaseRail, PHASES, type PhaseNode } from "@/components/OrbitalPhaseRail";
+import { WalletConnect, RitualNetworkStatus } from "@/components/WalletConnect";
 import { CreateBountyForm } from "@/components/CreateBountyForm";
 import { LoadBountyPanel } from "@/components/LoadBountyPanel";
-import { BountyView } from "@/components/BountyView";
-import { EclipseStage, PhaseRail, type RailStatus, type StageState } from "@/components/Observatory";
+import { BountyStage, BountyDrawer } from "@/components/BountyStage";
+import { EclipseStage } from "@/components/Observatory";
+import { HelpModal } from "@/components/HelpModal";
 import { useRecentBounties } from "@/hooks/useRecentBounties";
-import { isContractConfigured, contractAddress } from "@/config/contract";
+import { useBounty } from "@/hooks/useBounty";
+import { useNow } from "@/hooks/useNow";
+import { getBountyPhase, type BountyPhase } from "@/lib/bounty";
+import { isContractConfigured } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
-import { shortenAddress } from "@/lib/format";
+import { isAddressEqual } from "@/lib/format";
 import { Notice } from "@/components/ui";
+import { pushEvent } from "@/hooks/useEventStrip";
 
-// The fixed observatory phase rail (per the design brief). When no bounty is
-// selected we sit at Connect/Create; once a bounty is loaded BountyView drives
-// its own live rail. This top-level rail is the journey map.
-const JOURNEY = [
-  "Connect",
-  "Create",
-  "Status",
-  "Commit",
-  "Reveal",
-  "Fund AI",
-  "Judge",
-  "Verdict",
-  "Finalize",
-] as const;
+// Map the live bounty phase to a rail stage key so the rail tracks reality.
+const PHASE_TO_KEY: Record<BountyPhase, string> = {
+  commit: "commit",
+  reveal: "reveal",
+  judging: "judge",
+  judged: "verdict",
+  finalized: "finalize",
+};
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<bigint | null>(null);
+  const [helpOpen, setHelpOpen] = useState(false);
   const { ids, add } = useRecentBounties();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const chainId = useChainId();
+  const now = useNow();
   const wrongNetwork = isConnected && chainId !== ritualChain.id;
+
+  const { bounty } = useBounty(selectedId ?? undefined);
 
   useEffect(() => {
     if (selectedId !== null) add(selectedId);
   }, [selectedId, add]);
+
+  // Signal the strip when a wallet comes online.
+  useEffect(() => {
+    if (isConnected && address) {
+      pushEvent({ kind: "wallet", label: "Wallet connected", detail: address });
+    }
+  }, [isConnected, address]);
 
   const handleCreated = useCallback(
     (id: bigint) => {
@@ -47,137 +59,157 @@ export default function Home() {
     [add],
   );
 
-  // Central stage state when no bounty is open: dark eclipse / wrong-network /
-  // powered observatory waiting for a bounty.
-  const stageState: StageState = wrongNetwork
+  // ---- derive rail status ----
+  const livePhase = bounty ? getBountyPhase(bounty, now || undefined) : null;
+  const activeKey = !isConnected
+    ? "connect"
+    : selectedId === null
+      ? "create"
+      : livePhase
+        ? PHASE_TO_KEY[livePhase]
+        : "status";
+  const activeIdx = Math.max(0, PHASES.findIndex((p) => p.key === activeKey));
+
+  const railNodes: PhaseNode[] = PHASES.map((p, i) => ({
+    key: p.key,
+    index: i,
+    label: p.label,
+    status: i < activeIdx ? "done" : i === activeIdx ? "active" : "locked",
+  }));
+
+  // ---- countdowns for the rail ----
+  const nowMs = now || Date.now();
+  let submissionCountdown = null;
+  let revealCountdown = null;
+  if (bounty) {
+    const sub = Number(bounty.submissionDeadline);
+    const rev = Number(bounty.revealDeadline);
+    const span = rev - sub || 1;
+    submissionCountdown = {
+      label: "Submission",
+      remainingMs: sub - nowMs,
+      totalMs: span,
+      ended: nowMs >= sub,
+    };
+    revealCountdown = {
+      label: "Reveal",
+      remainingMs: rev - nowMs,
+      totalMs: span,
+      ended: nowMs >= rev,
+    };
+  }
+
+  const isOwner = bounty ? isAddressEqual(address, bounty.owner) : false;
+
+  // ---- stage state when no bounty open ----
+  const idleStage: "disconnected" | "wrong-network" | "commit" = wrongNetwork
     ? "wrong-network"
     : !isConnected
       ? "disconnected"
-      : "commit"; // powered, awaiting a bounty star
-
-  // Journey rail status: Connect done once connected; Create active.
-  const activeJourney = !isConnected ? 0 : selectedId !== null ? 2 : 1;
-  const railNodes = JOURNEY.map((label, i) => ({
-    key: label,
-    label,
-    status: (i < activeJourney ? "done" : i === activeJourney ? "active" : "locked") as RailStatus,
-  }));
+      : "commit";
 
   return (
-    <div className="min-h-full">
-      {/* Observatory top bar */}
-      <header className="sticky top-0 z-20 border-b border-violet-400/15 bg-[#04050a]/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
-            <EclipseMark />
-            <div>
-              <h1 className="text-sm font-semibold leading-tight tracking-[0.18em] text-zinc-100">
-                ECLIPSE OBSERVATORY
-              </h1>
-              <p className="text-[11px] leading-tight text-cyan-200/70">
-                privacy-preserving AI bounty judge · {ritualChain.name}
-              </p>
+    <>
+      <AppShell
+        topBar={
+          <TopCommandBar
+            network={<RitualNetworkStatus />}
+            wallet={<WalletConnect />}
+            bountyId={selectedId}
+            onHelp={() => setHelpOpen(true)}
+          />
+        }
+        phaseRail={
+          <OrbitalPhaseRail
+            nodes={railNodes}
+            submissionCountdown={submissionCountdown}
+            revealCountdown={revealCountdown}
+          />
+        }
+        stage={
+          selectedId !== null ? (
+            <BountyStage bountyId={selectedId} onBack={() => setSelectedId(null)} />
+          ) : (
+            <IdleStage state={idleStage} connected={isConnected} wrongNetwork={wrongNetwork} />
+          )
+        }
+        drawer={
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/40">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--amber)] shadow-[0_0_8px_2px_var(--amber)]" />
+              {selectedId !== null ? (isOwner ? "Owner actions" : "Participant actions") : "Open / load"}
             </div>
-          </div>
-          <WalletConnect />
-        </div>
-      </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-        {selectedId === null ? (
-          <>
-            {/* Orbital phase rail — the journey, not a navbar */}
-            <PhaseRail nodes={railNodes} />
+            {!isContractConfigured && (
+              <Notice tone="amber">
+                No observatory linked. Set{" "}
+                <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code>.
+              </Notice>
+            )}
 
-            <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
-              {/* ZONE 1 — Central Observatory (the eclipse stage is the hero) */}
-              <section className="relative flex min-h-[460px] flex-col items-center justify-center overflow-hidden rounded-3xl glass-panel px-6 py-10">
-                <div className="pointer-events-none absolute inset-0 opacity-60 [background:radial-gradient(circle_at_50%_40%,rgba(139,92,246,0.12),transparent_60%)]" />
-                <EclipseStage phase={stageState} size="lg" />
-                <h2 className="mt-6 text-center text-3xl font-light tracking-tight text-zinc-50 sm:text-5xl">
-                  Send your answer into{" "}
-                  <span className="bg-gradient-to-r from-violet-300 via-cyan-200 to-violet-300 bg-clip-text font-normal text-transparent">
-                    eclipse
-                  </span>
-                  .
-                </h2>
-                <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-zinc-400">
-                  {wrongNetwork
-                    ? "The orbit is misaligned — switch to Ritual to power the observatory."
-                    : !isConnected
-                      ? "The observatory is dark. Connect a wallet to bring it online."
-                      : "Open a bounty star on the right, or align the lens to an existing one."}
-                </p>
-                <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-zinc-400">
-                  {[
-                    "Only the commitment corona is public.",
-                    "The AI reads the constellation in one batch.",
-                    "Winner fixed in golden orbit.",
-                  ].map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full border border-violet-400/15 bg-white/[0.03] px-3 py-1"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </section>
-
-              {/* ZONE 3 — Signal Drawer (create / load when idle) */}
-              <aside className="space-y-5">
-                <div className="flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_2px_rgba(34,211,238,0.7)]" />
-                  Signal Drawer
-                </div>
-
-                {!isContractConfigured && (
-                  <Notice tone="amber">
-                    No observatory linked. Set{" "}
-                    <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code> in{" "}
-                    <code className="font-mono">.env.local</code>.
-                  </Notice>
-                )}
-
+            {selectedId !== null && bounty ? (
+              <BountyDrawer
+                bountyId={selectedId}
+                bounty={bounty}
+                isOwner={isOwner}
+              />
+            ) : (
+              <>
                 <CreateBountyForm onCreated={handleCreated} />
                 <LoadBountyPanel selectedId={selectedId} onSelect={setSelectedId} recentIds={ids} />
-              </aside>
-            </div>
-          </>
-        ) : (
-          // A bounty is open: the whole observatory is its live stage + drawer.
-          <div className="space-y-4">
-            <button
-              onClick={() => setSelectedId(null)}
-              className="text-xs text-cyan-300/80 transition-colors hover:text-cyan-200"
-            >
-              ← back to the observatory
-            </button>
-            <BountyView bountyId={selectedId} />
+              </>
+            )}
           </div>
-        )}
-
-        <footer className="mt-10 border-t border-violet-400/15 pt-4 text-xs text-zinc-600">
-          {contractAddress ? (
-            <>
-              Observatory <span className="font-mono">{shortenAddress(contractAddress, 6)}</span> ·
-              Chain {ritualChain.id}
-            </>
-          ) : (
-            <>Eclipse Observatory · {ritualChain.name}</>
-          )}
-        </footer>
-      </main>
-    </div>
+        }
+      />
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
+    </>
   );
 }
 
-function EclipseMark() {
+/* The central stage when no bounty is open: the observatory core, dark until
+   a wallet powers it on. */
+function IdleStage({
+  state,
+  connected,
+  wrongNetwork,
+}: {
+  state: "disconnected" | "wrong-network" | "commit";
+  connected: boolean;
+  wrongNetwork: boolean;
+}) {
   return (
-    <svg viewBox="0 0 40 40" className="h-9 w-9">
-      <circle cx="20" cy="20" r="14" fill="none" stroke="rgba(34,211,238,0.4)" strokeWidth="1" className="orbit-spin" style={{ transformOrigin: "20px 20px" }} />
-      <circle cx="20" cy="20" r="9" fill="#04050a" stroke="#8b5cf6" strokeWidth="1.4" />
-      <circle cx="23" cy="17" r="8" fill="#04050a" stroke="rgba(34,211,238,0.6)" strokeWidth="0.8" className="corona-flicker" />
-    </svg>
+    <section className="glass relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden rounded-3xl px-6 py-12">
+      <div className="pointer-events-none absolute inset-0 opacity-70 [background:radial-gradient(circle_at_50%_38%,rgba(255,184,77,0.1),transparent_60%)]" />
+      <EclipseStage phase={state} size="lg" />
+      <h2 className="mt-7 text-center text-3xl font-light tracking-tight text-[var(--ash)] sm:text-5xl">
+        Send your answer into{" "}
+        <span
+          className="bg-clip-text font-normal text-transparent"
+          style={{ backgroundImage: "linear-gradient(90deg, var(--amber), var(--aurora), var(--amber))" }}
+        >
+          eclipse
+        </span>
+        .
+      </h2>
+      <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[var(--ash)]/60">
+        {wrongNetwork
+          ? "The orbit is misaligned — switch to Ritual to power the observatory."
+          : !connected
+            ? "The observatory is dark. Connect a wallet to bring it online."
+            : "Open a bounty star, or align the lens to an existing one."}
+      </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-[var(--ash)]/50">
+        {[
+          "Only the commitment corona is public.",
+          "The AI reads the constellation in one batch.",
+          "Winner fixed in golden orbit.",
+        ].map((t) => (
+          <span key={t} className="rounded-full border border-[var(--ash)]/12 bg-white/[0.03] px-3 py-1">
+            {t}
+          </span>
+        ))}
+      </div>
+    </section>
   );
 }

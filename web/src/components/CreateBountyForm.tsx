@@ -6,6 +6,7 @@ import { parseEther, parseEventLogs } from "viem";
 import { contractAddress, isContractConfigured } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
 import eclipseAbi from "@/abi/EclipseBountyJudge";
+import { pushEvent } from "@/hooks/useEventStrip";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import {
   Card,
@@ -50,6 +51,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
       const id = logs[0]?.args?.bountyId;
       if (id !== undefined) {
         setCreatedId(id);
+        pushEvent({ kind: "create", label: "Bounty star opened", detail: `#${id.toString()}` });
         onCreated?.(id);
       }
     } catch {

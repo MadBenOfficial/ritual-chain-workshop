@@ -11,6 +11,7 @@ import { buildJudgeAllLlmInput, type JudgeSubmission } from "@/lib/ritualLlm";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { useRitualWalletStatus } from "@/hooks/useRitualWalletStatus";
 import { RitualWalletPanel } from "@/components/RitualWalletPanel";
+import { pushEvent } from "@/hooks/useEventStrip";
 import { Card, CardHeader, CardBody, Button, TxStatus, Notice, Spinner } from "@/components/ui";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -41,7 +42,10 @@ export function JudgeAll({
   const publicClient = usePublicClient({ chainId: ritualChain.id });
   const [gathering, setGathering] = useState(false);
   const [gatherError, setGatherError] = useState<string | null>(null);
-  const tx = useWriteTx(() => onJudged());
+  const tx = useWriteTx(() => {
+    pushEvent({ kind: "verdict", label: "Constellation judged", detail: `bounty #${bountyId.toString()}` });
+    onJudged();
+  });
   const reclaimTx = useWriteTx(() => onJudged());
 
   // Preflight the *connected* wallet's RitualWallet funding (not the bounty

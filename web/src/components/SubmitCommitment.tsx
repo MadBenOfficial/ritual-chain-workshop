@@ -17,6 +17,7 @@ import {
 } from "@/lib/bounty";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { CopyHash, SaltMoon, CommitmentCorona } from "@/components/Observatory";
+import { pushEvent } from "@/hooks/useEventStrip";
 import { Card, CardHeader, CardBody, Field, Textarea, Button, TxStatus, Notice } from "@/components/ui";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -44,6 +45,7 @@ export function SubmitCommitment({
   const tx = useWriteTx(() => {
     setAnswer("");
     setSalt(null);
+    pushEvent({ kind: "commit", label: "Commitment sealed", detail: `bounty #${bountyId.toString()}` });
     onSubmitted();
   });
 

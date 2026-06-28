@@ -5,6 +5,7 @@ import { RITUAL_WALLET, ritualWalletAbi } from "@/abi/RitualWallet";
 import { DEPOSIT_AMOUNT, LOCK_DURATION, type RitualWalletStatus } from "@/lib/ritualWallet";
 import { ritualChain } from "@/config/wagmi";
 import { useWriteTx } from "@/hooks/useWriteTx";
+import { pushEvent } from "@/hooks/useEventStrip";
 import { RitualAILens } from "@/components/Observatory";
 import { Badge, Button, Notice, Spinner, TxStatus } from "@/components/ui";
 
@@ -25,7 +26,10 @@ export function RitualWalletPanel({
   status: Status;
   onDeposited: () => void;
 }) {
-  const tx = useWriteTx(() => onDeposited());
+  const tx = useWriteTx(() => {
+    pushEvent({ kind: "fund", label: "AI judgement funded", detail: "lens charged" });
+    onDeposited();
+  });
 
   async function handleDeposit() {
     try {

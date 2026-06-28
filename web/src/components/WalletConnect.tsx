@@ -10,7 +10,34 @@ import {
 } from "wagmi";
 import { ritualChain } from "@/config/wagmi";
 import { shortenAddress } from "@/lib/format";
-import { Button, Badge } from "@/components/ui";
+import { Button } from "@/components/ui";
+
+/** "Ritual Orbit Connected" network status pill. */
+export function RitualNetworkStatus() {
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
+  if (!isConnected) return null;
+  const wrong = chainId !== ritualChain.id;
+  return (
+    <span
+      className="hidden items-center gap-1.5 rounded-lg border px-2 py-1 text-[11px] sm:inline-flex"
+      style={
+        wrong
+          ? { borderColor: "rgba(255,77,61,0.4)", color: "var(--ember)", background: "rgba(255,77,61,0.06)" }
+          : { borderColor: "rgba(67,217,163,0.35)", color: "var(--verdigris)", background: "rgba(67,217,163,0.06)" }
+      }
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{
+          background: wrong ? "var(--ember)" : "var(--verdigris)",
+          boxShadow: `0 0 8px 1px ${wrong ? "var(--ember)" : "var(--verdigris)"}`,
+        }}
+      />
+      {wrong ? "Off Ritual orbit" : "Ritual Orbit Connected"}
+    </span>
+  );
+}
 
 export function WalletConnect() {
   const { address, isConnected } = useAccount();
@@ -25,35 +52,23 @@ export function WalletConnect() {
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-2">
-        {wrongChain ? (
+        {wrongChain && (
           <Button
             variant="secondary"
             onClick={() => switchChain({ chainId: ritualChain.id })}
-            className="ring-amber-400/40 text-amber-200 eclipse-vibrate"
+            className="eclipse-vibrate text-[var(--ember)]"
+            style={{ borderColor: "rgba(255,77,61,0.5)" }}
           >
-            Wrong network · switch to {ritualChain.name}
+            Switch to {ritualChain.name}
           </Button>
-        ) : (
-          <Badge tone="cyan">
-            <span className="mr-1 inline-block h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_8px_2px_rgba(34,211,238,0.8)]" />
-            Ritual Orbit Connected
-          </Badge>
         )}
-        <Button
-          variant="secondary"
-          onClick={() => disconnect()}
-          title="Astral coordinates · click to disconnect"
-        >
-          <span className="text-[10px] uppercase tracking-[0.14em] text-cyan-200/60">
-            coords
-          </span>
+        <Button variant="secondary" onClick={() => disconnect()} title={address}>
           <span className="font-mono">{shortenAddress(address)}</span>
         </Button>
       </div>
     );
   }
 
-  // Dedupe connectors by name (injected + metaMask can overlap).
   const seen = new Set<string>();
   const list = connectors.filter((c) => {
     if (seen.has(c.name)) return false;
@@ -67,11 +82,9 @@ export function WalletConnect() {
         {isPending ? "Connecting…" : "Connect Wallet"}
       </Button>
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl glass-panel shadow-xl">
+        <div className="glass-strong absolute right-0 z-40 mt-2 w-52 overflow-hidden rounded-xl shadow-xl">
           {list.length === 0 && (
-            <div className="px-3 py-2 text-xs text-zinc-500">
-              No wallet connectors found.
-            </div>
+            <div className="px-3 py-2 text-xs text-[var(--ash)]/50">No wallet connectors found.</div>
           )}
           {list.map((connector) => (
             <button
@@ -80,7 +93,7 @@ export function WalletConnect() {
                 connect({ connector });
                 setOpen(false);
               }}
-              className="block w-full px-3 py-2 text-left text-sm text-zinc-200 transition-colors hover:bg-cyan-500/10 hover:text-cyan-100"
+              className="block w-full px-3 py-2 text-left text-sm text-[var(--ash)]/85 transition-colors hover:bg-[var(--amber)]/10 hover:text-[var(--amber)]"
             >
               {connector.name}
             </button>

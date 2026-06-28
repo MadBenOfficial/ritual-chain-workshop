@@ -19,6 +19,7 @@ import {
   Notice,
 } from "@/components/ui";
 import { RewardCore } from "@/components/Observatory";
+import { pushEvent } from "@/hooks/useEventStrip";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -42,7 +43,10 @@ export function FinalizeWinner({
   const winnerIndex =
     override ?? (recommended !== undefined ? String(recommended) : "");
 
-  const tx = useWriteTx(() => onFinalized());
+  const tx = useWriteTx(() => {
+    pushEvent({ kind: "finalize", label: "Winner finalized", detail: `bounty #${bountyId.toString()}` });
+    onFinalized();
+  });
 
   // Gate per spec: owner only, judged, not finalized.
   if (!isOwner || !bounty.judged || bounty.finalized) return null;
