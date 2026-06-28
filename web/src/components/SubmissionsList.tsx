@@ -6,7 +6,8 @@ import { contractAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
 import { shortenAddress } from "@/lib/format";
 import type { JudgeResult } from "@/lib/aiReview";
-import { Card, CardHeader, CardBody, Badge } from "@/components/ui";
+import { Badge } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 export function SubmissionsList({
   bountyId,
@@ -22,13 +23,17 @@ export function SubmissionsList({
   const indices = Array.from({ length: count }, (_, i) => i);
 
   return (
-    <Card>
-      <CardHeader
-        title="Constellation · Submissions"
-        subtitle="Eclipsed during commit; revealed stars are read together."
-        action={<Badge tone="zinc">{count}</Badge>}
-      />
-      <CardBody className="space-y-3">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="star" />}
+      step="STAR REGISTRY"
+      title="Submissions"
+      hint="Eclipsed during commit; revealed stars are read together."
+      accent="ash"
+    >
+      <div className="space-y-3">
+        <div className="flex items-center justify-end">
+          <Badge tone="ash">{count}</Badge>
+        </div>
         {count === 0 ? (
           <p className="text-sm text-[var(--ash)]/45">No stars in this sky yet.</p>
         ) : (
@@ -48,8 +53,8 @@ export function SubmissionsList({
             />
           ))
         )}
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }
 
@@ -103,12 +108,12 @@ function SubmissionRow({
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          {ranking ? <Badge tone="zinc">score {ranking.score}</Badge> : null}
-          {revealed ? <Badge tone="cyan">Revealed</Badge> : <Badge tone="violet">Eclipsed · Sealed</Badge>}
+          {ranking ? <Badge tone="ash">score {ranking.score}</Badge> : null}
+          {revealed ? <Badge tone="verdigris">Revealed</Badge> : <Badge tone="eclipse">Eclipsed · Sealed</Badge>}
           {isWinner ? (
-            <Badge tone="gold">Golden orbit</Badge>
+            <Badge tone="amber">Golden orbit</Badge>
           ) : recommended ? (
-            <Badge tone="cyan">AI recommends</Badge>
+            <Badge tone="aurora">AI recommends</Badge>
           ) : null}
           {humanOverride ? <Badge tone="amber">Human override</Badge> : null}
         </div>

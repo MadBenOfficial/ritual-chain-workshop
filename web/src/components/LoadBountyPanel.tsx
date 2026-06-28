@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardBody, Field, Input, Button } from "@/components/ui";
+import { Field, Input, Button } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 export function LoadBountyPanel({
   selectedId,
@@ -33,12 +34,14 @@ export function LoadBountyPanel({
   }
 
   return (
-    <Card>
-      <CardHeader
-        title="Align the lens · Load a bounty"
-        subtitle="Open any bounty by its numeric id."
-      />
-      <CardBody className="space-y-3">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="lens" />}
+      step="ALIGN THE LENS"
+      title="Load a bounty"
+      hint="Open any bounty by its numeric id."
+      accent="aurora"
+    >
+      <div className="space-y-3">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -84,7 +87,7 @@ export function LoadBountyPanel({
             </div>
           </div>
         )}
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }

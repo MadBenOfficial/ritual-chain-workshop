@@ -112,7 +112,7 @@ export function BountyDrawer({ bountyId, bounty, isOwner }: { bountyId: bigint; 
   const judge = decodeAiReview(bounty.aiReview)?.parsed ?? null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <BountyDetail bountyId={bountyId} bounty={bounty} isOwner={isOwner} />
       <SubmitCommitment bountyId={bountyId} bounty={bounty} onSubmitted={reload} />
       <RevealAnswer bountyId={bountyId} bounty={bounty} onRevealed={reload} />

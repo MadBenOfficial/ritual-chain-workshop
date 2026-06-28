@@ -12,7 +12,8 @@ import { useWriteTx } from "@/hooks/useWriteTx";
 import { useRitualWalletStatus } from "@/hooks/useRitualWalletStatus";
 import { RitualWalletPanel } from "@/components/RitualWalletPanel";
 import { pushEvent } from "@/hooks/useEventStrip";
-import { Card, CardHeader, CardBody, Button, TxStatus, Notice, Spinner } from "@/components/ui";
+import { Button, TxStatus, Notice, Spinner } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -80,12 +81,14 @@ export function JudgeAll({
     };
 
     return (
-      <Card>
-        <CardHeader
-          title="Constellation · Empty sky"
-          subtitle="The reveal window closed with no revealed stars."
-        />
-        <CardBody className="space-y-3">
+      <DrawerPanel
+        glyph={<MiniGlyph kind="lens" />}
+        step="STEP 6 · JUDGE"
+        title="Read the constellation"
+        hint="The reveal window closed with no revealed stars."
+        accent="aurora"
+      >
+        <div className="space-y-3">
           <Notice tone="amber">
             Unrevealed stars are excluded — and nothing was revealed. There is no constellation to
             read. You can release the reward locked in orbit back to yourself.
@@ -99,8 +102,8 @@ export function JudgeAll({
             hash={reclaimTx.hash}
             explorerBase={explorerBase}
           />
-        </CardBody>
-      </Card>
+        </div>
+      </DrawerPanel>
     );
   }
 
@@ -164,12 +167,14 @@ export function JudgeAll({
   const fundingReady = walletStatus.ready === true;
 
   return (
-    <Card>
-      <CardHeader
-        title="Constellation Judgement · Judge all revealed"
-        subtitle="The AI reads the constellation in one batch. Unrevealed stars are excluded."
-      />
-      <CardBody className="space-y-3">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="lens" />}
+      step="STEP 6 · JUDGE"
+      title="Read the constellation"
+      hint="The AI reads the constellation in one batch. Unrevealed stars are excluded."
+      accent="aurora"
+    >
+      <div className="space-y-3">
         <Notice tone="violet">AI recommends. Human aligns. The owner finalizes the winner.</Notice>
 
         {/* Constellation preview: revealed stars are bright + linked; unrevealed
@@ -199,8 +204,8 @@ export function JudgeAll({
         </Button>
         {gatherError && <Notice tone="red">{gatherError}</Notice>}
         <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }
 

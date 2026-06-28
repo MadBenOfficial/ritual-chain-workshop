@@ -18,7 +18,8 @@ import {
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { CopyHash, SaltMoon, CommitmentCorona } from "@/components/Observatory";
 import { pushEvent } from "@/hooks/useEventStrip";
-import { Card, CardHeader, CardBody, Field, Textarea, Button, TxStatus, Notice } from "@/components/ui";
+import { Field, Textarea, Button, TxStatus, Notice } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -52,17 +53,17 @@ export function SubmitCommitment({
   if (!canCommit(bounty, now)) {
     // commit closed
     return (
-      <Card>
-        <CardHeader
-          title="Eclipse · Commit your answer"
-          subtitle="Only the commitment corona is public."
-        />
-        <CardBody>
-          <Notice tone="zinc">
-            The eclipse has sealed — the commit window for this bounty is closed.
-          </Notice>
-        </CardBody>
-      </Card>
+      <DrawerPanel
+        glyph={<MiniGlyph kind="eclipse" />}
+        step="STEP 3 · COMMIT"
+        title="Send into eclipse"
+        hint="Only the commitment corona is public."
+        accent="eclipse"
+      >
+        <Notice tone="zinc">
+          The eclipse has sealed — the commit window for this bounty is closed.
+        </Notice>
+      </DrawerPanel>
     );
   }
 
@@ -111,12 +112,14 @@ export function SubmitCommitment({
   }
 
   return (
-    <Card>
-      <CardHeader
-        title="Send Into Eclipse · Commit your answer"
-        subtitle="Send your answer into eclipse. Only the commitment corona is public."
-      />
-      <CardBody>
+    <DrawerPanel
+      glyph={<MiniGlyph kind="eclipse" />}
+      step="STEP 3 · COMMIT"
+      title="Send into eclipse"
+      hint="Send your answer into eclipse. Only the commitment corona is public."
+      accent="eclipse"
+    >
+      <div>
         {/* Eclipse animation: star (answer) → salt moon covers it → corona */}
         <div className="mb-4 grid place-items-center rounded-xl border border-[var(--ash)]/10 bg-black/30 py-5">
           <CommitEclipseAnim state={state} />
@@ -198,8 +201,8 @@ export function SubmitCommitment({
           {!isConnected && <p className="text-xs text-[var(--ash)]/45">Connect your wallet to commit.</p>}
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
         </form>
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }
 

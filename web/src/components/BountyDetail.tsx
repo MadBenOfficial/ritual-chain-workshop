@@ -5,7 +5,8 @@ import { getBountyPhase, PHASE_META, canCommit, canReveal } from "@/lib/bounty";
 import { useNow } from "@/hooks/useNow";
 import { shortenAddress, formatReward, formatTimestamp, formatRelative } from "@/lib/format";
 import { CountdownRing } from "@/components/Observatory";
-import { Card, CardHeader, CardBody, Badge, Stat } from "@/components/ui";
+import { Badge } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 export function BountyDetail({
   bountyId,
@@ -36,24 +37,18 @@ export function BountyDetail({
   const revealOpen = canReveal(bounty, nowMs);
 
   return (
-    <Card>
-      <CardHeader
-        title={
-          <span className="flex items-center gap-2">
-            <span className="font-mono text-[var(--ash)]/45">#{bountyId.toString()}</span>
-            <span className="normal-case text-base text-[var(--ash)]">
-              {bounty.title || "Untitled"}
-            </span>
-          </span>
-        }
-        action={
-          <div className="flex items-center gap-2">
-            {isOwner && <Badge tone="indigo">You own this</Badge>}
-            <Badge tone={meta.tone}>{meta.label}</Badge>
-          </div>
-        }
-      />
-      <CardBody className="space-y-4">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="orbit" />}
+      step="STATUS · BOUNTY ORBIT"
+      title={`#${bountyId.toString()} ${bounty.title || "Untitled"}`}
+      accent="copper"
+    >
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {isOwner && <Badge tone="indigo">You own this</Badge>}
+          <Badge tone={meta.tone}>{meta.label}</Badge>
+        </div>
+
         {/* Two orbital countdown rings: submission + reveal moons. */}
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
@@ -87,36 +82,38 @@ export function BountyDetail({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
-          <Stat label="Reward" value={formatReward(bounty.reward)} />
-          <Stat label="Owner" value={shortenAddress(bounty.owner)} />
-          <Stat
-            label="Eclipsed / Revealed"
-            value={`${bounty.submissionCount.toString()} / ${bounty.revealedCount.toString()}`}
-          />
-          <Stat label="Winner" value={bounty.finalized ? `#${bounty.winnerIndex.toString()}` : "-"} />
-          <Stat
-            label="Submission deadline"
-            value={
-              <span>
-                {formatTimestamp(bounty.submissionDeadline)}
-                <span className="ml-1 text-xs text-[var(--ash)]/45">
-                  ({formatRelative(bounty.submissionDeadline)})
+        <div className="overflow-hidden rounded-xl border border-[var(--ash)]/10 bg-black/30">
+          <div className="grid grid-cols-2 divide-x divide-y divide-[var(--ash)]/8">
+            <Readout label="Reward" value={formatReward(bounty.reward)} />
+            <Readout label="Owner" value={shortenAddress(bounty.owner)} />
+            <Readout
+              label="Eclipsed / Revealed"
+              value={`${bounty.submissionCount.toString()} / ${bounty.revealedCount.toString()}`}
+            />
+            <Readout label="Winner" value={bounty.finalized ? `#${bounty.winnerIndex.toString()}` : "-"} />
+            <Readout
+              label="Submission deadline"
+              value={
+                <span>
+                  {formatTimestamp(bounty.submissionDeadline)}
+                  <span className="ml-1 text-xs text-[var(--ash)]/45">
+                    ({formatRelative(bounty.submissionDeadline)})
+                  </span>
                 </span>
-              </span>
-            }
-          />
-          <Stat
-            label="Reveal deadline"
-            value={
-              <span>
-                {formatTimestamp(bounty.revealDeadline)}
-                <span className="ml-1 text-xs text-[var(--ash)]/45">
-                  ({formatRelative(bounty.revealDeadline)})
+              }
+            />
+            <Readout
+              label="Reveal deadline"
+              value={
+                <span>
+                  {formatTimestamp(bounty.revealDeadline)}
+                  <span className="ml-1 text-xs text-[var(--ash)]/45">
+                    ({formatRelative(bounty.revealDeadline)})
+                  </span>
                 </span>
-              </span>
-            }
-          />
+              }
+            />
+          </div>
         </div>
 
         {bounty.finalized && (
@@ -126,7 +123,19 @@ export function BountyDetail({
             Finalized — reward paid.
           </div>
         )}
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
+  );
+}
+
+/* Instrument-readout cell: a small etched label over a precise value, laid out
+   in a divided grid so the block reads like a console gauge cluster rather than
+   a set of stacked cards. */
+function Readout({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="px-3 py-2">
+      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--ash)]/40">{label}</div>
+      <div className="mt-0.5 break-words text-sm font-medium text-[var(--ash)]">{value}</div>
+    </div>
   );
 }

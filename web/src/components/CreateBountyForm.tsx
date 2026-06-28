@@ -9,9 +9,6 @@ import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { pushEvent } from "@/hooks/useEventStrip";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import {
-  Card,
-  CardHeader,
-  CardBody,
   Field,
   Input,
   Textarea,
@@ -19,6 +16,7 @@ import {
   TxStatus,
   Notice,
 } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 import { RewardCore } from "@/components/Observatory";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -110,12 +108,14 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
   }
 
   return (
-    <Card>
-      <CardHeader
-        title="Open a bounty · New orbit"
-        subtitle="Lock a reward in orbit, set the eclipse (commit) and reveal windows."
-      />
-      <CardBody>
+    <DrawerPanel
+      glyph={<MiniGlyph kind="star" />}
+      step="STEP 1 · CREATE"
+      title="Open a bounty star"
+      hint="Lock a reward in orbit, set the eclipse (commit) and reveal windows."
+      accent="amber"
+    >
+      <div>
         {!isContractConfigured && (
           <Notice tone="amber">
             Set <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code> in your{" "}
@@ -210,7 +210,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
             </div>
           )}
         </form>
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }

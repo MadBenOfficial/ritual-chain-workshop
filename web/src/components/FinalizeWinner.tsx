@@ -9,15 +9,13 @@ import { decodeAiReview } from "@/lib/aiReview";
 import { formatReward } from "@/lib/format";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import {
-  Card,
-  CardHeader,
-  CardBody,
   Field,
   Input,
   Button,
   TxStatus,
   Notice,
 } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 import { RewardCore } from "@/components/Observatory";
 import { pushEvent } from "@/hooks/useEventStrip";
 
@@ -74,12 +72,14 @@ export function FinalizeWinner({
   }
 
   return (
-    <Card>
-      <CardHeader
-        title="Golden Orbit · Finalize winner"
-        subtitle="Fix the winning star in a golden orbit and release the reward."
-      />
-      <CardBody className="space-y-3">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="star" />}
+      step="STEP 8 · FINALIZE"
+      title="Fix the golden orbit"
+      hint="Fix the winning star in a golden orbit and release the reward."
+      accent="amber"
+    >
+      <div className="space-y-3">
         <Notice tone="gold">
           Reward locked in orbit ({formatReward(bounty.reward)}) — released to a single winner.
         </Notice>
@@ -131,7 +131,7 @@ export function FinalizeWinner({
           hash={tx.hash}
           explorerBase={explorerBase}
         />
-      </CardBody>
-    </Card>
+      </div>
+    </DrawerPanel>
   );
 }

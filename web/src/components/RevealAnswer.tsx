@@ -11,7 +11,8 @@ import { useWriteTx } from "@/hooks/useWriteTx";
 import { CopyHash } from "@/components/Observatory";
 import { pushEvent } from "@/hooks/useEventStrip";
 import { motion } from "framer-motion";
-import { Card, CardHeader, CardBody, Field, Textarea, Input, Button, TxStatus, Notice } from "@/components/ui";
+import { Field, Textarea, Input, Button, TxStatus, Notice } from "@/components/ui";
+import { DrawerPanel, MiniGlyph } from "@/components/DrawerPanel";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
 
@@ -94,13 +95,14 @@ export function RevealAnswer({
   }
 
   return (
-    <Card>
-      <CardHeader
-        title="Break the Eclipse · Reveal your answer"
-        subtitle="Your salt is the moon that opens the eclipse. Reveal aligns answer, salt, sender, and bounty."
-      />
-      <CardBody>
-        <form onSubmit={handleReveal} className="space-y-3">
+    <DrawerPanel
+      glyph={<MiniGlyph kind="reveal" />}
+      step="STEP 4 · REVEAL"
+      title="Break the eclipse"
+      hint="Your salt is the moon that opens the eclipse. Reveal aligns answer, salt, sender, and bounty."
+      accent="verdigris"
+    >
+      <form onSubmit={handleReveal} className="space-y-3">
           {stored ? (
             <Notice tone="cyan">
               Found your saved corona for this bounty in this browser — answer and salt are
@@ -164,8 +166,7 @@ export function RevealAnswer({
           ) : null}
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
         </form>
-      </CardBody>
-    </Card>
+    </DrawerPanel>
   );
 }
 
