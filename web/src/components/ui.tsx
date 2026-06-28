@@ -24,7 +24,7 @@ export function CardHeader({
         <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--ash)]">
           {title}
         </h2>
-        {subtitle ? <p className="mt-0.5 text-xs text-[var(--ash)]/55">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-0.5 text-xs text-[var(--ash)]/78">{subtitle}</p> : null}
       </div>
       {action}
     </div>
@@ -113,15 +113,15 @@ export function Button({ variant = "primary", className = "", children, ...rest 
 export function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-[var(--ash)]/60">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-[var(--ash)]/82">{label}</span>
       {children}
-      {hint ? <span className="mt-1 block text-xs text-[var(--ash)]/40">{hint}</span> : null}
+      {hint ? <span className="mt-1 block text-xs text-[var(--ash)]/65">{hint}</span> : null}
     </label>
   );
 }
 
 const inputBase =
-  "w-full rounded-xl border border-[var(--ash)]/12 bg-black/40 px-3 py-2 text-sm text-[var(--ash)] placeholder:text-[var(--ash)]/35 focus-glow transition-colors";
+  "w-full rounded-xl border border-[var(--ash)]/12 bg-black/40 px-3 py-2 text-sm text-[var(--ash)] placeholder:text-[var(--ash)]/60 focus-glow transition-colors";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputBase} ${props.className ?? ""}`} />;
@@ -194,7 +194,7 @@ export function Notice({ tone = "ash", children }: { tone?: Tone; children: Reac
 export function Stat({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
-      <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/45">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/72">{label}</div>
       <div className="mt-0.5 break-words text-sm font-medium text-[var(--ash)]">{value}</div>
     </div>
   );
@@ -235,7 +235,7 @@ export function Modal({
         style={{ boxShadow: "0 0 0 1px rgba(255,184,77,0.18), 0 40px 90px -40px rgba(0,0,0,0.95)" }}
       >
         <h3 className="text-base font-semibold tracking-wide text-[var(--ash)]">{title}</h3>
-        {subtitle ? <p className="mt-1 text-xs text-[var(--ash)]/55">{subtitle}</p> : null}
+        {subtitle ? <p className="mt-1 text-xs text-[var(--ash)]/78">{subtitle}</p> : null}
         <div className="mt-4 space-y-3 text-sm text-[var(--ash)]/85">{children}</div>
         {footer ? <div className="mt-5 flex justify-end gap-2">{footer}</div> : null}
       </div>

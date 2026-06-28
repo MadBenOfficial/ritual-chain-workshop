@@ -26,7 +26,7 @@ export function AppShell({
     <div className="flex min-h-screen flex-col">
       <div className="sticky top-0 z-30 px-3 pt-3 sm:px-4">{topBar}</div>
 
-      <div className="mx-auto grid w-full max-w-[1500px] flex-1 grid-cols-1 gap-3 px-3 py-3 sm:px-4 lg:grid-cols-[260px_minmax(0,1fr)_340px]">
+      <div className="mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-3 px-3 py-3 sm:px-4 lg:grid-cols-[260px_minmax(0,1fr)_410px]">
         {/* Left — Orbital Phase Rail */}
         <div className="order-2 lg:order-1">{phaseRail}</div>
         {/* Center — Main Stage */}
@@ -120,11 +120,11 @@ export function BottomEventStrip() {
 
   return (
     <div className="glass mx-auto flex max-w-[1500px] items-center gap-3 overflow-x-auto rounded-2xl px-3 py-2 thin-scroll">
-      <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--ash)]/40">
+      <span className="shrink-0 text-[10px] uppercase tracking-[0.18em] text-[var(--ash)]/65">
         Signal log
       </span>
       {events.length === 0 ? (
-        <span className="text-[11px] text-[var(--ash)]/40">
+        <span className="text-[11px] text-[var(--ash)]/65">
           No signals yet — connect a wallet to bring the observatory online.
         </span>
       ) : (

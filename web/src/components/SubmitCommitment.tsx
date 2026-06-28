@@ -147,7 +147,7 @@ export function SubmitCommitment({
 
           {/* Commitment formula helper */}
           <div className="rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
-            <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/45">
+            <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/72">
               Commitment formula
             </div>
             <code className="mt-1 block break-words font-mono text-[11px] text-[var(--aurora)]/90">
@@ -158,7 +158,7 @@ export function SubmitCommitment({
           {/* Salt moon control + live hash preview */}
           <div className="space-y-2 rounded-xl border border-[var(--ash)]/10 bg-black/30 px-3 py-2">
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/45">
+              <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/72">
                 Salt moon
               </span>
               <Button
@@ -173,17 +173,17 @@ export function SubmitCommitment({
             </div>
             {salt ? (
               <div className="flex items-center gap-2">
-                <span className="w-16 shrink-0 text-[11px] text-[var(--ash)]/60">salt</span>
+                <span className="w-16 shrink-0 text-[11px] text-[var(--ash)]/82">salt</span>
                 <CopyHash value={salt} />
               </div>
             ) : (
-              <p className="text-xs text-[var(--ash)]/45">
+              <p className="text-xs text-[var(--ash)]/72">
                 Your salt is the moon that opens the eclipse. Generate it to preview the corona hash.
               </p>
             )}
             {preview ? (
               <div className="flex items-center gap-2">
-                <span className="w-16 shrink-0 text-[11px] text-[var(--ash)]/60">corona</span>
+                <span className="w-16 shrink-0 text-[11px] text-[var(--ash)]/82">corona</span>
                 <CopyHash value={preview} />
               </div>
             ) : null}
@@ -198,7 +198,7 @@ export function SubmitCommitment({
           <Button type="submit" disabled={!isConnected || !answer.trim() || tx.isBusy} className="w-full">
             {tx.isBusy ? "Entering eclipse…" : "Send into eclipse (commit)"}
           </Button>
-          {!isConnected && <p className="text-xs text-[var(--ash)]/45">Connect your wallet to commit.</p>}
+          {!isConnected && <p className="text-xs text-[var(--ash)]/72">Connect your wallet to commit.</p>}
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
         </form>
       </div>
@@ -226,7 +226,7 @@ function CommitEclipseAnim({
               exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-1"
             >
-              <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--ash)]/45">
+              <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--ash)]/72">
                 Your answer · a bright star
               </span>
               <div className="twinkle text-3xl">✦</div>

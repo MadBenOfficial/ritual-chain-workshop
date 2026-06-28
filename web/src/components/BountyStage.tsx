@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useBounty } from "@/hooks/useBounty";
 import { useNow } from "@/hooks/useNow";
 import { decodeAiReview } from "@/lib/aiReview";
@@ -33,7 +34,7 @@ export function BountyStage({ bountyId, onBack }: { bountyId: bigint; onBack: ()
   if (isLoading) {
     return (
       <Scene>
-        <div className="flex items-center gap-2 text-sm text-[var(--ash)]/60">
+        <div className="flex items-center gap-2 text-sm text-[var(--ash)]/82">
           <Spinner /> Aligning the lens on bounty #{bountyId.toString()}…
         </div>
       </Scene>
@@ -77,7 +78,7 @@ export function BountyStage({ bountyId, onBack }: { bountyId: bigint; onBack: ()
           {bounty.title || "Untitled star"}
         </div>
         <EclipseStage phase={phase} size="lg" />
-        <p className="mt-5 max-w-md text-center text-xs leading-relaxed text-[var(--ash)]/55">
+        <p className="mt-5 max-w-md text-center text-xs leading-relaxed text-[var(--ash)]/78">
           {STAGE_CAPTION[phase]}
         </p>
       </div>
@@ -101,29 +102,84 @@ function Scene({ children }: { children: React.ReactNode }) {
 }
 
 /* ===================================== Action / Submissions Drawer (right) ==
-   Role-based actions + the live Star Registry. Driven by the same hooks. */
+   Role-based actions + the live Star Registry. Only the ACTIVE phase's action
+   panel is shown at a time, with a fade/slide transition between phases. */
 export function BountyDrawer({ bountyId, bounty, isOwner }: { bountyId: bigint; bounty: Bounty; isOwner: boolean }) {
-  // BountyStage owns the read; the drawer triggers a refetch through window focus
-  // / wagmi's own polling. We pass a no-op reload that components already debounce.
-  const reload = useCallback(() => {
-    // useBounty polls; nothing else required here.
-  }, []);
+  const now = useNow();
+  const [showRegistry, setShowRegistry] = useState(true);
+  const reload = useCallback(() => {}, []);
 
   const judge = decodeAiReview(bounty.aiReview)?.parsed ?? null;
+  const phase = getBountyPhase(bounty, now || undefined);
+
+  // The single action panel for the current phase. Each component already
+  // self-hides outside its window, so this just selects which to mount.
+  const action =
+    phase === "commit" ? (
+      <SubmitCommitment key="commit" bountyId={bountyId} bounty={bounty} onSubmitted={reload} />
+    ) : phase === "reveal" ? (
+      <RevealAnswer key="reveal" bountyId={bountyId} bounty={bounty} onRevealed={reload} />
+    ) : phase === "judging" ? (
+      <JudgeAll key="judge" bountyId={bountyId} bounty={bounty} isOwner={isOwner} onJudged={reload} />
+    ) : phase === "judged" ? (
+      <FinalizeWinner key="finalize" bountyId={bountyId} bounty={bounty} isOwner={isOwner} onFinalized={reload} />
+    ) : null; // finalized → no action
 
   return (
     <div className="space-y-3">
       <BountyDetail bountyId={bountyId} bounty={bounty} isOwner={isOwner} />
-      <SubmitCommitment bountyId={bountyId} bounty={bounty} onSubmitted={reload} />
-      <RevealAnswer bountyId={bountyId} bounty={bounty} onRevealed={reload} />
-      <JudgeAll bountyId={bountyId} bounty={bounty} isOwner={isOwner} onJudged={reload} />
-      <FinalizeWinner bountyId={bountyId} bounty={bounty} isOwner={isOwner} onFinalized={reload} />
-      <SubmissionsList
-        bountyId={bountyId}
-        count={Number(bounty.submissionCount)}
-        judge={judge}
-        finalWinner={bounty.finalized ? Number(bounty.winnerIndex) : undefined}
-      />
+
+      <AnimatePresence mode="wait">
+        {action ? (
+          <motion.div
+            key={phase}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            {action}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="finalized-note"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-[var(--amber)]/25 bg-[var(--amber)]/[0.06] px-4 py-3 text-[12px] text-[var(--amber)]/90"
+          >
+            Finalized — reward paid. The winning star is fixed in golden orbit.
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Star Registry — collapsible, so it doesn't compete with the action */}
+      <div>
+        <button
+          onClick={() => setShowRegistry((v) => !v)}
+          className="mb-2 flex w-full items-center justify-between rounded-xl border border-[var(--ash)]/10 bg-white/[0.03] px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-[var(--ash)]/75 transition-colors hover:text-[var(--ash)]"
+        >
+          <span>Star Registry · {Number(bounty.submissionCount)}</span>
+          <span>{showRegistry ? "▾" : "▸"}</span>
+        </button>
+        <AnimatePresence initial={false}>
+          {showRegistry && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <SubmissionsList
+                bountyId={bountyId}
+                count={Number(bounty.submissionCount)}
+                judge={judge}
+                finalWinner={bounty.finalized ? Number(bounty.winnerIndex) : undefined}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

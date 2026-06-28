@@ -244,7 +244,7 @@ function JudgeSteps({ active }: { active: boolean }) {
             </span>
             <span
               className={
-                current ? "text-[var(--aurora)]" : done ? "text-[var(--verdigris)]/80" : "text-[var(--ash)]/35"
+                current ? "text-[var(--aurora)]" : done ? "text-[var(--verdigris)]/80" : "text-[var(--ash)]/60"
               }
             >
               {label}
@@ -314,7 +314,7 @@ function ConstellationPreview({
           </g>
         )}
       </svg>
-      <span className="text-[11px] text-[var(--ash)]/45">
+      <span className="text-[11px] text-[var(--ash)]/72">
         {revealed} revealed in the constellation · {dim} excluded
       </span>
     </div>

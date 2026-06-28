@@ -64,7 +64,7 @@ export function LoadBountyPanel({
 
         {recentIds.length > 0 && (
           <div>
-            <div className="mb-1 text-[11px] uppercase tracking-wide text-[var(--ash)]/45">
+            <div className="mb-1 text-[11px] uppercase tracking-wide text-[var(--ash)]/72">
               Recent
             </div>
             <div className="flex flex-wrap gap-1.5">

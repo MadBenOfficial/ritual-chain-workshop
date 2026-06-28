@@ -28,7 +28,7 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
             {parsed.ranking.length > 0 && (
               <div className="overflow-hidden rounded-xl border border-white/10">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-white/5 text-xs uppercase tracking-wide text-[var(--ash)]/60">
+                  <thead className="bg-white/5 text-xs uppercase tracking-wide text-[var(--ash)]/82">
                     <tr>
                       <th className="px-3 py-2">#</th>
                       <th className="px-3 py-2">Score</th>
@@ -64,7 +64,7 @@ export function AIReviewDisplay({ aiReview }: { aiReview: `0x${string}` }) {
 
             {parsed.summary && (
               <div className="rounded-xl bg-black/20 px-3 py-2 text-sm text-[var(--ash)]/90">
-                <span className="text-[var(--ash)]/45">Summary: </span>
+                <span className="text-[var(--ash)]/72">Summary: </span>
                 {parsed.summary}
               </div>
             )}

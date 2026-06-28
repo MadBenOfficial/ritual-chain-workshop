@@ -35,7 +35,7 @@ export function SubmissionsList({
           <Badge tone="ash">{count}</Badge>
         </div>
         {count === 0 ? (
-          <p className="text-sm text-[var(--ash)]/45">No stars in this sky yet.</p>
+          <p className="text-sm text-[var(--ash)]/72">No stars in this sky yet.</p>
         ) : (
           indices.map((i) => (
             <SubmissionRow
@@ -100,7 +100,7 @@ function SubmissionRow({
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className={`font-mono text-xs ${isWinner ? "text-[var(--amber)] corona-flicker" : recommended ? "text-[var(--verdigris)]" : "text-[var(--ash)]/45"}`}>
+          <span className={`font-mono text-xs ${isWinner ? "text-[var(--amber)] corona-flicker" : recommended ? "text-[var(--verdigris)]" : "text-[var(--ash)]/72"}`}>
             ★{index}
           </span>
           <span className="font-mono text-sm text-[var(--ash)]/80">
@@ -124,14 +124,14 @@ function SubmissionRow({
           {answer ?? (isLoading ? "" : "-")}
         </p>
       ) : (
-        <p className="mt-2 text-sm italic text-[var(--ash)]/45">
+        <p className="mt-2 text-sm italic text-[var(--ash)]/72">
           In eclipse — only the commitment corona is public.
         </p>
       )}
 
       {ranking?.reason ? (
-        <p className="mt-2 border-t border-white/5 pt-2 text-xs text-[var(--ash)]/60">
-          <span className="text-[var(--ash)]/45">AI: </span>
+        <p className="mt-2 border-t border-white/5 pt-2 text-xs text-[var(--ash)]/82">
+          <span className="text-[var(--ash)]/72">AI: </span>
           {ranking.reason}
         </p>
       ) : null}

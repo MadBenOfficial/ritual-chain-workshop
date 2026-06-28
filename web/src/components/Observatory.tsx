@@ -303,7 +303,7 @@ export function CountdownRing({
       <div>
         <div className="text-sm font-medium text-[var(--ash)]">{label}</div>
         {sub ? (
-          <div className={`text-xs ${critical ? "text-[var(--amber)]" : low ? "text-[var(--amber)]/80" : "text-[var(--ash)]/45"}`}>
+          <div className={`text-xs ${critical ? "text-[var(--amber)]" : low ? "text-[var(--amber)]/80" : "text-[var(--ash)]/72"}`}>
             {sub}
             {critical ? " · critical" : low ? " · low" : ""}
           </div>
@@ -360,7 +360,7 @@ export function PhaseRail({
                   ? "text-[var(--aurora)]"
                   : n.status === "done"
                     ? "text-[var(--verdigris)]/80"
-                    : "text-[var(--ash)]/35",
+                    : "text-[var(--ash)]/60",
               ].join(" ")}
             >
               {n.label}
@@ -408,7 +408,7 @@ export function CopyHash({
     >
       <span className="break-all">{value}</span>
       <span
-        className={`transition-all ${copied ? "text-[var(--verdigris)]" : "text-[var(--ash)]/45 group-hover:text-[var(--verdigris)]"}`}
+        className={`transition-all ${copied ? "text-[var(--verdigris)]" : "text-[var(--ash)]/72 group-hover:text-[var(--verdigris)]"}`}
       >
         {copied ? "copied ✓" : "copy"}
       </span>
@@ -430,7 +430,7 @@ export function StageFrame({
     <div className="relative flex flex-col items-center gap-3 rounded-2xl glass px-5 py-6">
       {children}
       {caption ? (
-        <p className="max-w-md text-center text-xs leading-relaxed text-[var(--ash)]/60">
+        <p className="max-w-md text-center text-xs leading-relaxed text-[var(--ash)]/82">
           {caption}
         </p>
       ) : null}

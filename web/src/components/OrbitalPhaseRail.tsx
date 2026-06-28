@@ -46,7 +46,7 @@ export function OrbitalPhaseRail({
       aria-label="Observatory phases"
       className="glass flex h-full flex-col gap-1 rounded-2xl p-3 lg:sticky lg:top-24"
     >
-      <div className="mb-1 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/40">
+      <div className="mb-1 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/65">
         Phase orbit
       </div>
 
@@ -190,7 +190,7 @@ export function CountdownRow({ label, remainingMs, totalMs, ended }: CountdownPr
         <circle cx="20" cy="20" r="6" fill="#070707" stroke={tone} strokeWidth="0.6" />
       </svg>
       <div className="leading-tight">
-        <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--ash)]/45">{label}</div>
+        <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--ash)]/72">{label}</div>
         <div className="font-mono text-sm" style={{ color: tone }}>
           {ended ? "window closed" : `${minutes}m ${secs.toString().padStart(2, "0")}s`}
         </div>

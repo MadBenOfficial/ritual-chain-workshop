@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAccount, useChainId } from "wagmi";
 import { AppShell, TopCommandBar } from "@/components/AppShell";
 import { OrbitalPhaseRail, PHASES, type PhaseNode } from "@/components/OrbitalPhaseRail";
@@ -135,7 +136,7 @@ export default function Home() {
         }
         drawer={
           <div className="space-y-4">
-            <div className="flex items-center gap-2 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/40">
+            <div className="flex items-center gap-2 px-1 text-[10px] uppercase tracking-[0.2em] text-[var(--ash)]/65">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--amber)] shadow-[0_0_8px_2px_var(--amber)]" />
               {selectedId !== null ? (isOwner ? "Owner actions" : "Participant actions") : "Open / load"}
             </div>
@@ -154,10 +155,12 @@ export default function Home() {
                 isOwner={isOwner}
               />
             ) : (
-              <>
-                <CreateBountyForm onCreated={handleCreated} />
-                <LoadBountyPanel selectedId={selectedId} onSelect={setSelectedId} recentIds={ids} />
-              </>
+              <IdleDrawer
+                onCreated={handleCreated}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                recentIds={ids}
+              />
             )}
           </div>
         }
@@ -192,7 +195,7 @@ function IdleStage({
         </span>
         .
       </h2>
-      <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[var(--ash)]/60">
+      <p className="mt-3 max-w-xl text-center text-sm leading-relaxed text-[var(--ash)]/82">
         {wrongNetwork
           ? "The orbit is misaligned — switch to Ritual to power the observatory."
           : !connected
@@ -211,5 +214,55 @@ function IdleStage({
         ))}
       </div>
     </section>
+  );
+}
+
+/* Idle drawer: one console at a time — Create OR Load — with a small switch. */
+function IdleDrawer({
+  onCreated,
+  selectedId,
+  onSelect,
+  recentIds,
+}: {
+  onCreated: (id: bigint) => void;
+  selectedId: bigint | null;
+  onSelect: (id: bigint | null) => void;
+  recentIds: string[];
+}) {
+  const [tab, setTab] = useState<"create" | "load">("create");
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-1 rounded-xl border border-[var(--ash)]/10 bg-white/[0.03] p-1">
+        {(["create", "load"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className="rounded-lg px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] transition-colors"
+            style={
+              tab === t
+                ? { background: "var(--amber)", color: "#070707", fontWeight: 600 }
+                : { color: "var(--ash)" }
+            }
+          >
+            {t === "create" ? "Open a star" : "Load a bounty"}
+          </button>
+        ))}
+      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+        >
+          {tab === "create" ? (
+            <CreateBountyForm onCreated={onCreated} />
+          ) : (
+            <LoadBountyPanel selectedId={selectedId} onSelect={onSelect} recentIds={recentIds} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

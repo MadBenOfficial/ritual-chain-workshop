@@ -183,7 +183,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
           </Button>
 
           {!isConnected && (
-            <p className="text-xs text-[var(--ash)]/45">Connect your wallet to open a bounty.</p>
+            <p className="text-xs text-[var(--ash)]/72">Connect your wallet to open a bounty.</p>
           )}
 
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />

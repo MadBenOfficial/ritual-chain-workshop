@@ -76,7 +76,7 @@ export function BountyDetail({
         </div>
 
         <div>
-          <div className="text-[11px] uppercase tracking-wide text-[var(--ash)]/45">Rubric</div>
+          <div className="text-[11px] uppercase tracking-wide text-[var(--ash)]/72">Rubric</div>
           <p className="mt-1 whitespace-pre-wrap break-words text-sm text-[var(--ash)]/90">
             {bounty.rubric || "-"}
           </p>
@@ -96,7 +96,7 @@ export function BountyDetail({
               value={
                 <span>
                   {formatTimestamp(bounty.submissionDeadline)}
-                  <span className="ml-1 text-xs text-[var(--ash)]/45">
+                  <span className="ml-1 text-xs text-[var(--ash)]/72">
                     ({formatRelative(bounty.submissionDeadline)})
                   </span>
                 </span>
@@ -107,7 +107,7 @@ export function BountyDetail({
               value={
                 <span>
                   {formatTimestamp(bounty.revealDeadline)}
-                  <span className="ml-1 text-xs text-[var(--ash)]/45">
+                  <span className="ml-1 text-xs text-[var(--ash)]/72">
                     ({formatRelative(bounty.revealDeadline)})
                   </span>
                 </span>
@@ -134,7 +134,7 @@ export function BountyDetail({
 function Readout({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="px-3 py-2">
-      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--ash)]/40">{label}</div>
+      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--ash)]/65">{label}</div>
       <div className="mt-0.5 break-words text-sm font-medium text-[var(--ash)]">{value}</div>
     </div>
   );

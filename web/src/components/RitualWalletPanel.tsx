@@ -49,7 +49,7 @@ export function RitualWalletPanel({
   // Loading the three reads — show a neutral placeholder, don't block.
   if (!status.hasData) {
     return (
-      <div className="flex items-center gap-2 text-xs text-[var(--ash)]/45">
+      <div className="flex items-center gap-2 text-xs text-[var(--ash)]/72">
         <Spinner /> Checking RitualWallet funding…
       </div>
     );
@@ -69,7 +69,7 @@ export function RitualWalletPanel({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/45">Fuel the Oracle · LLM fees</span>
+        <span className="text-[11px] uppercase tracking-[0.14em] text-[var(--ash)]/72">Fuel the Oracle · LLM fees</span>
         {badge}
       </div>
 
@@ -79,7 +79,7 @@ export function RitualWalletPanel({
         <RitualAILens funded={ready === true} size={108} />
         <span
           className={`mt-1 text-[11px] uppercase tracking-[0.16em] ${
-            ready ? "text-[var(--amber)]/90" : "text-[var(--ash)]/45"
+            ready ? "text-[var(--amber)]/90" : "text-[var(--ash)]/72"
           }`}
         >
           {ready ? "Oracle funded" : "Lens flickering — fuel required"}

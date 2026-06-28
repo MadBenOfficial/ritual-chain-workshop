@@ -130,12 +130,12 @@ export function RevealAnswer({
               <TwoCoronas matches={matches} />
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/60">recomputed</span>
+                  <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/82">recomputed</span>
                   <CopyHash value={preview} />
                 </div>
                 {onChainCommitment ? (
                   <div className="flex items-center gap-2">
-                    <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/60">on-chain</span>
+                    <span className="w-20 shrink-0 text-[11px] text-[var(--ash)]/82">on-chain</span>
                     <CopyHash value={onChainCommitment} />
                   </div>
                 ) : null}
@@ -160,7 +160,7 @@ export function RevealAnswer({
           >
             {tx.isBusy ? "Opening the eclipse…" : "Open the eclipse (reveal)"}
           </Button>
-          {!isConnected && <p className="text-xs text-[var(--ash)]/45">Connect your wallet to reveal.</p>}
+          {!isConnected && <p className="text-xs text-[var(--ash)]/72">Connect your wallet to reveal.</p>}
           {!validSalt && salt ? (
             <p className="text-xs text-[var(--amber)]">Salt must be a 32-byte hex value (0x + 64 chars).</p>
           ) : null}
@@ -246,7 +246,7 @@ function TwoCoronas({ matches }: { matches: boolean | null }) {
       </svg>
       <p
         className={`text-[11px] ${
-          aligned ? "text-[var(--verdigris)]" : broken ? "text-[var(--amber)]" : "text-[var(--ash)]/45"
+          aligned ? "text-[var(--verdigris)]" : broken ? "text-[var(--amber)]" : "text-[var(--ash)]/72"
         }`}
       >
         {aligned

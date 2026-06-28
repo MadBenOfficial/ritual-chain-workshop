@@ -59,10 +59,10 @@ export function DrawerPanel({
               {step}
             </div>
           ) : null}
-          <h3 className="text-[13px] font-semibold tracking-wide text-[var(--ash)]">{title}</h3>
+          <h3 className="text-[14px] font-semibold tracking-wide text-[var(--ash)]">{title}</h3>
         </div>
       </header>
-      {hint ? <p className="px-4 pt-1 text-[11px] leading-relaxed text-[var(--ash)]/45">{hint}</p> : null}
+      {hint ? <p className="px-4 pt-1.5 text-[12px] leading-relaxed text-[var(--ash)]/70">{hint}</p> : null}
       <div className="px-4 pb-4 pt-3">{children}</div>
     </section>
   );
