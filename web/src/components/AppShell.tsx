@@ -28,13 +28,13 @@ export function AppShell({
 
       <div className="mx-auto grid w-full max-w-[1600px] flex-1 grid-cols-1 gap-3 px-3 py-3 sm:px-4 lg:grid-cols-[260px_minmax(0,1fr)_410px]">
         {/* Left — Orbital Phase Rail (own scroll on desktop) */}
-        <div className="order-2 lg:order-1 lg:sticky lg:top-[84px] lg:max-h-[calc(100vh-170px)] lg:overflow-y-auto thin-scroll">
+        <div className="order-2 lg:order-1 lg:sticky lg:top-[84px] lg:max-h-[calc(100vh-170px)] lg:overflow-y-auto lg:overscroll-contain thin-scroll">
           {phaseRail}
         </div>
         {/* Center — Main Stage */}
         <div className="order-1 lg:order-2">{stage}</div>
         {/* Right — Action / Submissions Drawer (own scroll on desktop) */}
-        <div className="order-3 lg:sticky lg:top-[84px] lg:max-h-[calc(100vh-170px)] lg:overflow-y-auto thin-scroll">
+        <div className="order-3 lg:sticky lg:top-[84px] lg:max-h-[calc(100vh-170px)] lg:overflow-y-auto lg:overscroll-contain thin-scroll">
           {drawer}
         </div>
       </div>
