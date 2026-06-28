@@ -19,14 +19,15 @@ import type { BountyPhase } from "@/lib/bounty";
 
 export type StageState = BountyPhase | "disconnected" | "wrong-network";
 
-export function EclipseStage({ phase }: { phase: StageState }) {
+export function EclipseStage({ phase, size = "md" }: { phase: StageState; size?: "md" | "lg" }) {
+  const cls = size === "lg" ? "h-60 w-60 sm:h-80 sm:w-80" : "h-44 w-44 sm:h-52 sm:w-52";
   return (
     <div
       className="relative grid place-items-center"
       aria-hidden
       role="presentation"
     >
-      <svg viewBox="0 0 240 240" className="h-44 w-44 sm:h-52 sm:w-52">
+      <svg viewBox="0 0 240 240" className={cls}>
         <defs>
           <radialGradient id="coronaV" cx="50%" cy="50%" r="50%">
             <stop offset="55%" stopColor="#8b5cf6" stopOpacity="0" />

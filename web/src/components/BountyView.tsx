@@ -21,7 +21,6 @@ import { SubmissionsList } from "@/components/SubmissionsList";
 import {
   EclipseStage,
   PhaseRail,
-  StageFrame,
   type RailStatus,
 } from "@/components/Observatory";
 import { Card, CardBody, Notice, Spinner } from "@/components/ui";
@@ -101,64 +100,48 @@ export function BountyView({ bountyId }: { bountyId: bigint }) {
   }));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Orbital phase navigator */}
       <PhaseRail nodes={railNodes} />
 
-      {/* Central stage — changes per phase */}
-      <StageFrame caption={STAGE_CAPTION[phase]}>
-        <EclipseStage phase={phase} />
-      </StageFrame>
+      {/* ZONE 1 — Central observatory: the live eclipse stage is the hero */}
+      <section className="relative flex flex-col items-center justify-center overflow-hidden rounded-3xl glass-panel px-6 py-8">
+        <div className="pointer-events-none absolute inset-0 opacity-60 [background:radial-gradient(circle_at_50%_35%,rgba(139,92,246,0.14),transparent_60%)]" />
+        <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-cyan-200/70">
+          <span className="font-mono text-zinc-500">#{bountyId.toString()}</span>
+          {bounty.title || "Untitled star"}
+        </div>
+        <EclipseStage phase={phase} size="lg" />
+        <p className="mt-5 max-w-md text-center text-xs leading-relaxed text-zinc-400">
+          {STAGE_CAPTION[phase]}
+        </p>
+      </section>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {/* Left column: details + Signal Drawer (role-based actions) */}
+      {/* ZONES 2 & 3 — Signal Drawer (role actions) + Star Registry */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <div className="space-y-4">
-          <BountyDetail bountyId={bountyId} bounty={bounty} isOwner={isOwner} />
-
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_2px_rgba(34,211,238,0.7)]" />
-              Signal Drawer
-              <span className="text-zinc-600 normal-case tracking-normal">
-                · {isOwner ? "owner controls" : "participant controls"}
-              </span>
-            </div>
-
-            <SubmitCommitment
-              bountyId={bountyId}
-              bounty={bounty}
-              onSubmitted={reload}
-            />
-            <RevealAnswer
-              bountyId={bountyId}
-              bounty={bounty}
-              onRevealed={reload}
-            />
-            <JudgeAll
-              bountyId={bountyId}
-              bounty={bounty}
-              isOwner={isOwner}
-              onJudged={reload}
-            />
-            <FinalizeWinner
-              bountyId={bountyId}
-              bounty={bounty}
-              isOwner={isOwner}
-              onFinalized={reload}
-            />
+          <div className="flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_2px_rgba(34,211,238,0.7)]" />
+            Signal Drawer
+            <span className="normal-case tracking-normal text-zinc-600">
+              · {isOwner ? "owner controls" : "participant controls"}
+            </span>
           </div>
+
+          <BountyDetail bountyId={bountyId} bounty={bounty} isOwner={isOwner} />
+          <SubmitCommitment bountyId={bountyId} bounty={bounty} onSubmitted={reload} />
+          <RevealAnswer bountyId={bountyId} bounty={bounty} onRevealed={reload} />
+          <JudgeAll bountyId={bountyId} bounty={bounty} isOwner={isOwner} onJudged={reload} />
+          <FinalizeWinner bountyId={bountyId} bounty={bounty} isOwner={isOwner} onFinalized={reload} />
         </div>
 
-        {/* Right column: AI verdict + constellation of submissions */}
         <div className="space-y-4">
           {bounty.judged && <AIReviewDisplay aiReview={bounty.aiReview} />}
           <SubmissionsList
             bountyId={bountyId}
             count={Number(bounty.submissionCount)}
             judge={judge}
-            finalWinner={
-              bounty.finalized ? Number(bounty.winnerIndex) : undefined
-            }
+            finalWinner={bounty.finalized ? Number(bounty.winnerIndex) : undefined}
           />
         </div>
       </div>
