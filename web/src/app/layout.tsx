@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Bounty Judge",
+  title: "Eclipse Observatory · AI Bounty Judge",
   description:
-    "Submit answers to a bounty. After the deadline, Ritual AI ranks all submissions. The bounty owner finalizes the winner.",
+    "Send your answer into eclipse. When the eclipse retreats, revealed answers form a constellation the Ritual AI reads in one pass. AI recommends. Human aligns.",
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-zinc-950 text-zinc-100">
+      <body className="min-h-full text-zinc-100">
         <Providers>{children}</Providers>
       </body>
     </html>

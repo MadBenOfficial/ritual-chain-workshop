@@ -1,4 +1,4 @@
-import { encodePacked, keccak256, type Address } from "viem";
+import { encodeAbiParameters, keccak256, type Address } from "viem";
 
 /** Parsed shape of the `getBounty` tuple return value (commit-reveal). */
 export type Bounty = {
@@ -6,14 +6,14 @@ export type Bounty = {
   title: string;
   rubric: string;
   reward: bigint;
-  submissionDeadline: bigint;
-  revealDeadline: bigint;
+  submissionDeadline: bigint; // commitClose (ms)
+  revealDeadline: bigint; // revealClose (ms)
   judged: boolean;
   finalized: boolean;
-  submissionCount: bigint;
+  submissionCount: bigint; // entryCount
   revealedCount: bigint;
   winnerIndex: bigint;
-  aiReview: `0x${string}`;
+  aiReview: `0x${string}`; // aiVerdict
 };
 
 /** getBounty returns a positional tuple — map it to a named object. */
@@ -63,33 +63,29 @@ export function parseBounty(
   };
 }
 
-export type BountyPhase =
-  | "submission" // accepting commitments
-  | "reveal" // accepting reveals
-  | "judging" // reveal closed, awaiting judgeAll
-  | "judged" // judged, awaiting finalize
-  | "finalized";
+/** The five on-chain phases of an Eclipse bounty. */
+export type BountyPhase = "commit" | "reveal" | "judging" | "judged" | "finalized";
 
 export const PHASE_META: Record<
   BountyPhase,
-  { label: string; tone: "green" | "amber" | "indigo" | "zinc" }
+  { label: string; short: string; tone: "cyan" | "violet" | "amber" | "gold" | "zinc" }
 > = {
-  submission: { label: "Act I · Commit", tone: "green" },
-  reveal: { label: "Act II · Reveal", tone: "amber" },
-  judging: { label: "Act III · Judging", tone: "amber" },
-  judged: { label: "Judged", tone: "indigo" },
-  finalized: { label: "Finalized", tone: "zinc" },
+  commit: { label: "Eclipse · Commit", short: "Commit", tone: "violet" },
+  reveal: { label: "Break the Eclipse · Reveal", short: "Reveal", tone: "cyan" },
+  judging: { label: "Constellation · Judging", short: "Judging", tone: "amber" },
+  judged: { label: "Predicted Alignment · Judged", short: "Judged", tone: "cyan" },
+  finalized: { label: "Golden Orbit · Finalized", short: "Finalized", tone: "gold" },
 };
 
 /**
- * Phase is driven by the two deadlines. UNITS: Ritual's block.timestamp is in
+ * Phase derived from the two deadlines. UNITS: Ritual's block.timestamp is in
  * MILLISECONDS, so the contract stores millisecond deadlines and this UI compares
- * against Date.now() (also milliseconds). Everything is consistent in ms.
+ * against Date.now() (also ms). The contract also exposes `phaseOf` directly.
  */
 export function getBountyPhase(b: Bounty, nowMs = Date.now()): BountyPhase {
   if (b.finalized) return "finalized";
   if (b.judged) return "judged";
-  if (nowMs < Number(b.submissionDeadline)) return "submission";
+  if (nowMs < Number(b.submissionDeadline)) return "commit";
   if (nowMs < Number(b.revealDeadline)) return "reveal";
   return "judging";
 }
@@ -114,9 +110,13 @@ export function canJudge(b: Bounty, nowMs = Date.now()): boolean {
   return !b.judged && !b.finalized && nowMs >= Number(b.revealDeadline);
 }
 
-// ----- commit-reveal crypto helpers (must match the contract) -----
+// ----- commit-reveal crypto helpers (MUST match the contract) -----
 
-/** keccak256(abi.encodePacked(answer, salt, sender, bountyId)) */
+/**
+ * keccak256(abi.encode(answer, salt, sender, bountyId)).
+ * NOTE: EclipseBountyJudge uses abi.encode (not encodePacked) — the dynamic
+ * `string` is length-prefixed and 32-byte aligned, removing boundary ambiguity.
+ */
 export function computeCommitment(
   answer: string,
   salt: `0x${string}`,
@@ -124,11 +124,14 @@ export function computeCommitment(
   bountyId: bigint,
 ): `0x${string}` {
   return keccak256(
-    encodePacked(["string", "bytes32", "address", "uint256"], [answer, salt, sender, bountyId]),
+    encodeAbiParameters(
+      [{ type: "string" }, { type: "bytes32" }, { type: "address" }, { type: "uint256" }],
+      [answer, salt, sender, bountyId],
+    ),
   );
 }
 
-/** Random 32-byte salt. The participant must keep it to reveal later. */
+/** Random 32-byte salt (the "salt moon" that opens the eclipse at reveal). */
 export function randomSalt(): `0x${string}` {
   const bytes = new Uint8Array(32);
   crypto.getRandomValues(bytes);
@@ -138,7 +141,7 @@ export function randomSalt(): `0x${string}` {
       .join("")) as `0x${string}`;
 }
 
-const SALT_KEY = "aijudge:commitments";
+const SALT_KEY = "eclipse:reveal-kit";
 type SaltStore = Record<string, { salt: `0x${string}`; answer: string }>;
 
 export function rememberCommitment(

@@ -29,11 +29,12 @@ export function WalletConnect() {
           <Button
             variant="secondary"
             onClick={() => switchChain({ chainId: ritualChain.id })}
+            className="ring-amber-400/40 text-amber-200"
           >
-            Switch to {ritualChain.name}
+            Wrong network · switch to {ritualChain.name}
           </Button>
         ) : (
-          <Badge tone="green">{ritualChain.name}</Badge>
+          <Badge tone="cyan">{ritualChain.name}</Badge>
         )}
         <Button variant="secondary" onClick={() => disconnect()}>
           {shortenAddress(address)}
@@ -56,7 +57,7 @@ export function WalletConnect() {
         {isPending ? "Connecting…" : "Connect Wallet"}
       </Button>
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-xl">
+        <div className="absolute right-0 z-20 mt-2 w-52 overflow-hidden rounded-xl glass-panel shadow-xl">
           {list.length === 0 && (
             <div className="px-3 py-2 text-xs text-zinc-500">
               No wallet connectors found.
@@ -69,7 +70,7 @@ export function WalletConnect() {
                 connect({ connector });
                 setOpen(false);
               }}
-              className="block w-full px-3 py-2 text-left text-sm text-zinc-200 hover:bg-white/10"
+              className="block w-full px-3 py-2 text-left text-sm text-zinc-200 transition-colors hover:bg-cyan-500/10 hover:text-cyan-100"
             >
               {connector.name}
             </button>

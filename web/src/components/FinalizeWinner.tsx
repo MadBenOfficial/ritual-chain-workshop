@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import aiJudgeAbi from "@/abi/AIJudge";
+import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { contractAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
 import type { Bounty } from "@/lib/bounty";
@@ -58,7 +58,7 @@ export function FinalizeWinner({
     try {
       await tx.run({
         address: contractAddress,
-        abi: aiJudgeAbi,
+        abi: eclipseAbi,
         functionName: "finalizeWinner",
         args: [bountyId, BigInt(idxNum)],
         chainId: ritualChain.id,
@@ -71,20 +71,19 @@ export function FinalizeWinner({
   return (
     <Card>
       <CardHeader
-        title="Finalize winner"
-        subtitle="Pays the reward to the chosen submission. Only one winner."
+        title="Golden Orbit · Finalize winner"
+        subtitle="Fix the winning star in a golden orbit and release the reward."
       />
       <CardBody className="space-y-3">
-        <Notice tone="zinc">
-          Only one winner receives the bounty reward (
-          {formatReward(bounty.reward)}).
+        <Notice tone="gold">
+          Reward locked in orbit ({formatReward(bounty.reward)}) — released to a single winner.
         </Notice>
 
         <Field
-          label="Winner index"
+          label="Winning star (index)"
           hint={
             recommended !== undefined
-              ? `AI recommends #${recommended}. You decide the final winner.`
+              ? `AI recommends #${recommended}. AI recommends. Human aligns.`
               : `Choose a submission index (0–${Math.max(count - 1, 0)}).`
           }
         >
@@ -108,7 +107,7 @@ export function FinalizeWinner({
           disabled={!valid || tx.isBusy}
           className="w-full"
         >
-          {tx.isBusy ? "Finalizing…" : "Finalize winner"}
+          {tx.isBusy ? "Fixing orbit…" : "Fix in golden orbit (finalize)"}
         </Button>
 
         <TxStatus

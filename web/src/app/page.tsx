@@ -32,15 +32,17 @@ export default function Home() {
   return (
     <div className="min-h-full">
       {/* Top nav */}
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-zinc-950/70 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-violet-400/15 bg-[#04050a]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-400 text-sm font-bold text-zinc-950">
-              AI
-            </div>
+          <div className="flex items-center gap-3">
+            <EclipseMark />
             <div>
-              <h1 className="text-sm font-semibold leading-tight">AI Bounty Judge</h1>
-              <p className="text-[11px] leading-tight text-zinc-500">on {ritualChain.name}</p>
+              <h1 className="text-sm font-semibold leading-tight tracking-[0.16em] text-zinc-100">
+                ECLIPSE OBSERVATORY
+              </h1>
+              <p className="text-[11px] leading-tight text-cyan-200/70">
+                privacy-preserving AI bounty judge · {ritualChain.name}
+              </p>
             </div>
           </div>
           <WalletConnect />
@@ -49,34 +51,42 @@ export default function Home() {
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         {/* Hero / explanation */}
-        <section className="mb-6">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Crowd-judged bounties, settled by AI.
+        <section className="mb-7">
+          <h2 className="text-2xl font-light tracking-tight text-zinc-50 sm:text-4xl">
+            Send your answer into{" "}
+            <span className="bg-gradient-to-r from-violet-300 via-cyan-200 to-violet-300 bg-clip-text font-normal text-transparent">
+              eclipse
+            </span>
+            .
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-            Submit answers to a bounty. After the deadline, Ritual AI ranks all submissions. The
-            bounty owner finalizes the winner.
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            Only the commitment corona is public. When the eclipse retreats, revealed
+            answers form a constellation the Ritual AI reads in one batch pass.
+            <span className="text-cyan-200/80"> AI recommends. Human aligns.</span>
           </p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-400">
-            <span className="rounded-full bg-white/5 px-3 py-1 ring-1 ring-inset ring-white/10">
-              AI review is advisory. The owner finalizes the winner.
-            </span>
-            <span className="rounded-full bg-white/5 px-3 py-1 ring-1 ring-inset ring-white/10">
-              All submissions are judged together after the deadline.
-            </span>
-            <span className="rounded-full bg-white/5 px-3 py-1 ring-1 ring-inset ring-white/10">
-              Only one winner receives the bounty reward.
-            </span>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
+            {[
+              "Only the commitment corona is public.",
+              "The AI reads the constellation in one batch.",
+              "Winner fixed in golden orbit.",
+            ].map((t) => (
+              <span
+                key={t}
+                className="rounded-full border border-violet-400/15 bg-white/[0.03] px-3 py-1"
+              >
+                {t}
+              </span>
+            ))}
           </div>
         </section>
 
         {!isContractConfigured && (
           <div className="mb-6">
             <Notice tone="amber">
-              No contract address configured. Copy <code className="font-mono">.env.example</code>{" "}
+              No observatory linked. Copy <code className="font-mono">.env.example</code>{" "}
               to <code className="font-mono">.env.local</code> and set{" "}
-              <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code> to start interacting
-              on-chain.
+              <code className="font-mono">NEXT_PUBLIC_CONTRACT_ADDRESS</code> to align the
+              lens with a live deployment.
             </Notice>
           </div>
         )}
@@ -94,17 +104,28 @@ export default function Home() {
           </section>
         )}
 
-        <footer className="mt-10 border-t border-white/10 pt-4 text-xs text-zinc-600">
+        <footer className="mt-10 border-t border-violet-400/15 pt-4 text-xs text-zinc-600">
           {contractAddress ? (
             <>
-              Contract <span className="font-mono">{shortenAddress(contractAddress, 6)}</span> ·
+              Observatory <span className="font-mono">{shortenAddress(contractAddress, 6)}</span> ·
               Chain {ritualChain.id}
             </>
           ) : (
-            <>Workshop demo · {ritualChain.name}</>
+            <>Eclipse Observatory · {ritualChain.name}</>
           )}
         </footer>
       </main>
     </div>
+  );
+}
+
+/** Small animated eclipse logomark for the header. */
+function EclipseMark() {
+  return (
+    <svg viewBox="0 0 40 40" className="h-9 w-9">
+      <circle cx="20" cy="20" r="14" fill="none" stroke="rgba(34,211,238,0.4)" strokeWidth="1" className="orbit-spin" style={{ transformOrigin: "20px 20px" }} />
+      <circle cx="20" cy="20" r="9" fill="#04050a" stroke="#8b5cf6" strokeWidth="1.4" />
+      <circle cx="23" cy="17" r="8" fill="#04050a" stroke="rgba(34,211,238,0.6)" strokeWidth="0.8" className="corona-flicker" />
+    </svg>
   );
 }

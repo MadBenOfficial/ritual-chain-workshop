@@ -14,7 +14,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-zinc-900/60 backdrop-blur shadow-xl shadow-black/20 ${className}`}
+      className={`rounded-2xl glass-panel ${className}`}
     >
       {children}
     </div>
@@ -31,13 +31,13 @@ export function CardHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-3 border-b border-white/10 px-5 py-4">
+    <div className="flex items-start justify-between gap-3 border-b border-violet-400/15 px-5 py-4">
       <div className="min-w-0">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-300">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
           {title}
         </h2>
         {subtitle ? (
-          <p className="mt-0.5 text-xs text-zinc-500">{subtitle}</p>
+          <p className="mt-0.5 text-xs text-zinc-400/80">{subtitle}</p>
         ) : null}
       </div>
       {action}
@@ -57,7 +57,7 @@ export function CardBody({
 
 /* ----------------------------------------------------------------- Badge */
 
-type Tone = "green" | "amber" | "indigo" | "zinc" | "red";
+type Tone = "green" | "amber" | "indigo" | "zinc" | "red" | "cyan" | "violet" | "gold";
 
 const TONES: Record<Tone, string> = {
   green: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
@@ -65,6 +65,9 @@ const TONES: Record<Tone, string> = {
   indigo: "bg-indigo-500/15 text-indigo-300 ring-indigo-500/30",
   zinc: "bg-zinc-500/15 text-zinc-300 ring-zinc-500/30",
   red: "bg-red-500/15 text-red-300 ring-red-500/30",
+  cyan: "bg-cyan-500/15 text-cyan-300 ring-cyan-500/30",
+  violet: "bg-violet-500/15 text-violet-300 ring-violet-500/30",
+  gold: "bg-amber-400/15 text-amber-200 ring-amber-300/40",
 };
 
 export function Badge({
@@ -97,14 +100,14 @@ export function Button({
 }: ButtonProps) {
   const styles: Record<string, string> = {
     primary:
-      "bg-indigo-500 text-white hover:bg-indigo-400 disabled:bg-indigo-500/40",
+      "bg-gradient-to-r from-violet-500 to-cyan-500 text-white shadow-[0_0_22px_-6px_rgba(139,92,246,0.7)] hover:from-violet-400 hover:to-cyan-400 disabled:from-violet-500/30 disabled:to-cyan-500/30 disabled:shadow-none",
     secondary:
-      "bg-white/10 text-zinc-100 hover:bg-white/15 disabled:bg-white/5",
+      "bg-white/5 text-zinc-100 ring-1 ring-inset ring-white/10 hover:bg-white/10 disabled:bg-white/5",
     ghost: "bg-transparent text-zinc-300 hover:bg-white/5",
   };
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:text-zinc-400 ${styles[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:text-zinc-400 ${styles[variant]} ${className}`}
       {...rest}
     >
       {children}
@@ -135,7 +138,7 @@ export function Field({
 }
 
 const inputBase =
-  "w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-400/60 focus:outline-none focus:ring-1 focus:ring-indigo-400/40";
+  "w-full rounded-xl border border-violet-400/15 bg-black/40 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus-glow transition-colors";
 
 export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputBase} ${props.className ?? ""}`} />;
@@ -226,8 +229,8 @@ export function Notice({
 
 export function Stat({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="rounded-xl bg-black/20 px-3 py-2">
-      <div className="text-[11px] uppercase tracking-wide text-zinc-500">
+    <div className="rounded-xl border border-violet-400/10 bg-black/30 px-3 py-2">
+      <div className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
         {label}
       </div>
       <div className="mt-0.5 text-sm font-medium text-zinc-100 break-words">

@@ -12,9 +12,10 @@ const explorerBase = ritualChain.blockExplorers?.default.url;
 type Status = Partial<RitualWalletStatus> & { isLoading: boolean; hasData: boolean };
 
 /**
- * RitualWallet funding preflight shown above "Judge all". Surfaces the current
- * balance / lock vs. the live block, and lets the owner deposit + lock LLM fees
- * without touching the bounty reward (that stays in the AIJudge contract).
+ * RitualWallet funding preflight shown above "Read constellation". Surfaces the
+ * current balance / lock vs. the live block, and lets the owner deposit + lock
+ * LLM fees without touching the bounty reward (that stays locked in orbit in the
+ * EclipseBountyJudge contract).
  */
 export function RitualWalletPanel({
   status,
@@ -63,7 +64,7 @@ export function RitualWalletPanel({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] uppercase tracking-wide text-zinc-500">LLM fees</span>
+        <span className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">Lens fuel · LLM fees</span>
         {badge}
       </div>
 

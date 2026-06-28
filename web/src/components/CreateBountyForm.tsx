@@ -5,7 +5,7 @@ import { useAccount } from "wagmi";
 import { parseEther, parseEventLogs } from "viem";
 import { contractAddress, isContractConfigured } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
-import aiJudgeAbi from "@/abi/AIJudge";
+import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import {
   Card,
@@ -42,8 +42,8 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
   const tx = useWriteTx((receipt) => {
     try {
       const logs = parseEventLogs({
-        abi: aiJudgeAbi,
-        eventName: "BountyCreated",
+        abi: eclipseAbi,
+        eventName: "BountyOpened",
         logs: receipt.logs,
       });
       const id = logs[0]?.args?.bountyId;
@@ -95,7 +95,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
     try {
       await tx.run({
         address: contractAddress,
-        abi: aiJudgeAbi,
+        abi: eclipseAbi,
         functionName: "createBounty",
         args: [title.trim(), rubric.trim(), subTs, revTs],
         value,
@@ -109,8 +109,8 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
   return (
     <Card>
       <CardHeader
-        title="Create a bounty"
-        subtitle="Fund a reward, set a submission window and a reveal window."
+        title="Open a bounty · New orbit"
+        subtitle="Lock a reward in orbit, set the eclipse (commit) and reveal windows."
       />
       <CardBody>
         {!isContractConfigured && (
@@ -140,7 +140,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
           </Field>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Field label="Submission deadline" hint="Commitments accepted until here.">
+            <Field label="Eclipse (commit) deadline" hint="Commitments accepted until here.">
               <Input
                 type="datetime-local"
                 value={submissionDeadline}
@@ -156,7 +156,7 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
             </Field>
           </div>
 
-          <Field label="Reward (RITUAL)" hint="Locked in the contract on create.">
+          <Field label="Reward (RITUAL)" hint="Locked in orbit on open.">
             <Input
               type="number"
               min="0"
@@ -176,18 +176,18 @@ export function CreateBountyForm({ onCreated }: { onCreated?: (bountyId: bigint)
             disabled={!isConnected || !isContractConfigured || !!validation || tx.isBusy}
             className="w-full"
           >
-            {tx.isBusy ? "Creating…" : "Create bounty"}
+            {tx.isBusy ? "Opening orbit…" : "Open bounty"}
           </Button>
 
           {!isConnected && (
-            <p className="text-xs text-zinc-500">Connect your wallet to create a bounty.</p>
+            <p className="text-xs text-zinc-500">Connect your wallet to open a bounty.</p>
           )}
 
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />
 
           {createdId !== null && (
-            <Notice tone="green">
-              Bounty created with id{" "}
+            <Notice tone="cyan">
+              New orbit opened with id{" "}
               <span className="font-mono font-semibold">#{createdId.toString()}</span>. Loaded
               below.
             </Notice>

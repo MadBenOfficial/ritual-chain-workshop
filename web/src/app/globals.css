@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #09090b;
-  --foreground: #fafafa;
+  /* Eclipse Observatory palette */
+  --background: #04050a; /* deep black */
+  --night: #0a0f1f; /* night blue */
+  --foreground: #eef1fb; /* lunar white */
+  --violet: #8b5cf6; /* ritual violet */
+  --cyan: #22d3ee; /* stellar cyan */
+  --gold: #f5c451; /* solar gold */
 }
 
 @theme inline {
@@ -12,11 +17,197 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html,
 body {
-  background:
-    radial-gradient(60rem 60rem at 80% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
-    radial-gradient(50rem 50rem at -10% 10%, rgba(16, 185, 129, 0.08), transparent 55%),
-    var(--background);
+  background-color: var(--background);
+}
+
+body {
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  position: relative;
+  min-height: 100%;
+}
+
+/* ---------------------------------------------------------- Atmosphere ---
+   Layered observatory sky: eclipse glow (violet/cyan), night-blue depth,
+   a faint astronomical grid, and very subtle star dust. Fixed so it reads
+   as the room the whole app sits inside. Kept low-opacity so panels float. */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(48rem 48rem at 78% -8%, rgba(139, 92, 246, 0.18), transparent 60%),
+    radial-gradient(42rem 42rem at 12% 4%, rgba(34, 211, 238, 0.12), transparent 58%),
+    radial-gradient(60rem 50rem at 50% 120%, rgba(10, 15, 31, 0.9), transparent 70%),
+    linear-gradient(180deg, #04050a 0%, #060912 55%, #04050a 100%);
+}
+
+/* astronomical grid + star dust */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(to right, rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.04) 1px, transparent 1px),
+    radial-gradient(1px 1px at 20% 30%, rgba(238, 241, 251, 0.7), transparent),
+    radial-gradient(1px 1px at 65% 18%, rgba(238, 241, 251, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 82% 62%, rgba(245, 196, 81, 0.55), transparent),
+    radial-gradient(1px 1px at 40% 78%, rgba(34, 211, 238, 0.6), transparent),
+    radial-gradient(1px 1px at 88% 38%, rgba(238, 241, 251, 0.45), transparent),
+    radial-gradient(1px 1px at 12% 60%, rgba(238, 241, 251, 0.4), transparent);
+  background-size:
+    44px 44px,
+    44px 44px,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+  animation: drift 120s linear infinite;
+}
+
+@keyframes drift {
+  from {
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      44px 44px,
+      44px 44px,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+}
+
+/* ---------------------------------------------------------- Animations -- */
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes eclipse-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+@keyframes corona-flicker {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.orbit-spin {
+  animation: spin-slow 48s linear infinite;
+  transform-origin: center;
+}
+.orbit-spin-rev {
+  animation: spin-reverse 72s linear infinite;
+  transform-origin: center;
+}
+.eclipse-pulse {
+  animation: eclipse-pulse 6s ease-in-out infinite;
+}
+.corona-flicker {
+  animation: corona-flicker 4s ease-in-out infinite;
+}
+.twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+.constellation-line {
+  stroke-dasharray: 4 6;
+  animation: dash-flow 6s linear infinite;
+}
+.rise-in {
+  animation: rise 0.5s ease-out both;
+}
+
+/* glass panel + glow helpers used by the UI primitives */
+.glass-panel {
+  background: linear-gradient(
+    160deg,
+    rgba(18, 22, 40, 0.72),
+    rgba(8, 11, 22, 0.6)
+  );
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(139, 92, 246, 0.16);
+  box-shadow:
+    0 1px 0 0 rgba(238, 241, 251, 0.05) inset,
+    0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+.focus-glow:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.6);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.4), 0 0 18px -4px rgba(34, 211, 238, 0.45);
+}
+
+/* respect reduced motion: freeze every animated element */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  body::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

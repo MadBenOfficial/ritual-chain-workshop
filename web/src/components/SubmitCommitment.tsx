@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import { useNow } from "@/hooks/useNow";
-import aiJudgeAbi from "@/abi/AIJudge";
+import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { contractAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
 import {
@@ -55,7 +55,7 @@ export function SubmitCommitment({
     try {
       await tx.run({
         address: contractAddress,
-        abi: aiJudgeAbi,
+        abi: eclipseAbi,
         functionName: "submitCommitment",
         args: [bountyId, commitment],
         chainId: ritualChain.id,
@@ -70,14 +70,14 @@ export function SubmitCommitment({
   return (
     <Card>
       <CardHeader
-        title="Act I · Commit your answer"
-        subtitle="Only a hash goes on-chain. Nobody can read your answer until you reveal."
+        title="Eclipse · Commit your answer"
+        subtitle="Only the commitment corona is public. Nobody can read your answer until you reveal."
       />
       <CardBody>
         {mine ? (
-          <Notice tone="green">
-            You already committed in this browser. Your salt is saved locally — come back during the
-            reveal window.
+          <Notice tone="cyan">
+            You already entered the eclipse from this browser. Your salt — the moon that opens it
+            — is saved locally. Return during the reveal window.
           </Notice>
         ) : null}
         <form onSubmit={handleSubmit} className="mt-3 space-y-3">
@@ -93,7 +93,7 @@ export function SubmitCommitment({
             />
           </Field>
           <Button type="submit" disabled={!isConnected || !answer.trim() || tx.isBusy} className="w-full">
-            {tx.isBusy ? "Sealing…" : "Seal answer (commit)"}
+            {tx.isBusy ? "Entering eclipse…" : "Send into eclipse (commit)"}
           </Button>
           {!isConnected && <p className="text-xs text-zinc-500">Connect your wallet to commit.</p>}
           <TxStatus state={tx.state} error={tx.error} hash={tx.hash} explorerBase={explorerBase} />

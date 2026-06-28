@@ -35,7 +35,7 @@ export function LoadBountyPanel({
   return (
     <Card>
       <CardHeader
-        title="Load a bounty"
+        title="Align the lens · Load a bounty"
         subtitle="Open any bounty by its numeric id."
       />
       <CardBody className="space-y-3">
@@ -74,8 +74,8 @@ export function LoadBountyPanel({
                   }}
                   className={`rounded-lg px-2 py-1 font-mono text-xs ring-1 ring-inset transition-colors ${
                     selectedId?.toString() === id
-                      ? "bg-indigo-500/20 text-indigo-200 ring-indigo-500/40"
-                      : "bg-black/20 text-zinc-300 ring-white/10 hover:bg-white/10"
+                      ? "bg-cyan-500/20 text-cyan-200 ring-cyan-400/40"
+                      : "bg-black/20 text-zinc-300 ring-violet-400/15 hover:bg-white/10"
                   }`}
                 >
                   #{id}

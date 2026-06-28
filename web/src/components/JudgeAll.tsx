@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useAccount, usePublicClient } from "wagmi";
-import aiJudgeAbi from "@/abi/AIJudge";
+import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { contractAddress, executorAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
-import type { Bounty } from "@/lib/bounty";
+import { canJudge, type Bounty } from "@/lib/bounty";
 import { buildJudgeAllLlmInput, type JudgeSubmission } from "@/lib/ritualLlm";
 import { useWriteTx } from "@/hooks/useWriteTx";
 import { useRitualWalletStatus } from "@/hooks/useRitualWalletStatus";
@@ -30,6 +30,7 @@ export function JudgeAll({
   const [gathering, setGathering] = useState(false);
   const [gatherError, setGatherError] = useState<string | null>(null);
   const tx = useWriteTx(() => onJudged());
+  const reclaimTx = useWriteTx(() => onJudged());
 
   // Preflight the *connected* wallet's RitualWallet funding (not the bounty
   // contract) — judgeAll spends prepaid+locked RITUAL via the LLM precompile.
@@ -37,9 +38,58 @@ export function JudgeAll({
 
   const count = Number(bounty.submissionCount);
   const revealedCount = Number(bounty.revealedCount);
+  const judgeWindowOpen = canJudge(bounty);
 
-  // Gate per spec: owner only, reveal window over, has revealed answers, not judged.
-  if (!isOwner || bounty.judged || bounty.finalized || revealedCount === 0) {
+  // Owner-only stage, not already judged/finalized.
+  if (!isOwner || bounty.judged || bounty.finalized) {
+    return null;
+  }
+
+  // Reveal window closed with zero revealed stars: nothing to judge — the
+  // owner can pull the reward back out of orbit instead.
+  if (judgeWindowOpen && revealedCount === 0) {
+    const handleReclaim = async () => {
+      if (!contractAddress) return;
+      try {
+        await reclaimTx.run({
+          address: contractAddress,
+          abi: eclipseAbi,
+          functionName: "reclaimReward",
+          args: [bountyId],
+          chainId: ritualChain.id,
+        });
+      } catch {
+        /* surfaced via reclaimTx.state */
+      }
+    };
+
+    return (
+      <Card>
+        <CardHeader
+          title="Constellation · Empty sky"
+          subtitle="The reveal window closed with no revealed stars."
+        />
+        <CardBody className="space-y-3">
+          <Notice tone="amber">
+            Unrevealed stars are excluded — and nothing was revealed. There is no constellation to
+            read. You can release the reward locked in orbit back to yourself.
+          </Notice>
+          <Button onClick={handleReclaim} disabled={reclaimTx.isBusy} className="w-full">
+            {reclaimTx.isBusy ? "Reclaiming…" : "Reclaim reward"}
+          </Button>
+          <TxStatus
+            state={reclaimTx.state}
+            error={reclaimTx.error}
+            hash={reclaimTx.hash}
+            explorerBase={explorerBase}
+          />
+        </CardBody>
+      </Card>
+    );
+  }
+
+  // Otherwise judging requires at least one revealed answer.
+  if (revealedCount === 0) {
     return null;
   }
 
@@ -53,7 +103,7 @@ export function JudgeAll({
       for (let i = 0; i < count; i++) {
         const [submitter, , revealed, answer] = await publicClient.readContract({
           address: contractAddress,
-          abi: aiJudgeAbi,
+          abi: eclipseAbi,
           functionName: "getSubmission",
           args: [bountyId, BigInt(i)],
         });
@@ -78,7 +128,7 @@ export function JudgeAll({
       // it to storage — so an estimated tx runs out of gas mid-settlement.
       await tx.run({
         address: contractAddress,
-        abi: aiJudgeAbi,
+        abi: eclipseAbi,
         functionName: "judgeAll",
         args: [bountyId, llmInput],
         chainId: ritualChain.id,
@@ -100,25 +150,25 @@ export function JudgeAll({
   return (
     <Card>
       <CardHeader
-        title="Act III · Judge all submissions"
-        subtitle="Sends ONE Ritual LLM request ranking every revealed submission."
+        title="Constellation · Judge all revealed"
+        subtitle="The AI reads the constellation in one batch. Unrevealed stars are excluded."
       />
       <CardBody className="space-y-3">
-        <Notice tone="indigo">AI review is advisory. The bounty owner finalizes the winner.</Notice>
+        <Notice tone="violet">AI recommends. Human aligns. The owner finalizes the winner.</Notice>
 
         <RitualWalletPanel status={walletStatus} onDeposited={walletStatus.refetch} />
 
         <Button onClick={handleJudge} disabled={busy || !fundingReady} className="w-full">
           {gathering ? (
             <>
-              <Spinner /> Gathering {revealedCount} revealed submissions…
+              <Spinner /> Mapping {revealedCount} revealed stars…
             </>
           ) : tx.isBusy ? (
-            "Judging…"
+            "Reading the constellation…"
           ) : !fundingReady ? (
-            "Fund RitualWallet to judge"
+            "Fund the lens to judge"
           ) : (
-            `Judge all revealed (${revealedCount})`
+            `Read constellation (${revealedCount})`
           )}
         </Button>
         {gatherError && <Notice tone="red">{gatherError}</Notice>}

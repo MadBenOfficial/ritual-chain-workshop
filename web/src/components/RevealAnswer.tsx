@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { useNow } from "@/hooks/useNow";
-import aiJudgeAbi from "@/abi/AIJudge";
+import eclipseAbi from "@/abi/EclipseBountyJudge";
 import { contractAddress } from "@/config/contract";
 import { ritualChain } from "@/config/wagmi";
 import { canReveal, computeCommitment, recallCommitment, type Bounty } from "@/lib/bounty";
 import { useWriteTx } from "@/hooks/useWriteTx";
+import { CopyHash } from "@/components/Observatory";
 import { Card, CardHeader, CardBody, Field, Textarea, Input, Button, TxStatus, Notice } from "@/components/ui";
 
 const explorerBase = ritualChain.blockExplorers?.default.url;
@@ -43,8 +44,8 @@ export function RevealAnswer({
   // gas on a reveal that would revert with "commitment mismatch".
   const slotQ = useReadContract({
     address: contractAddress,
-    abi: aiJudgeAbi,
-    functionName: "commitmentSlot",
+    abi: eclipseAbi,
+    functionName: "entrySlot",
     args: address ? [bountyId, address] : undefined,
     chainId: ritualChain.id,
     query: { enabled: Boolean(address) },
@@ -52,7 +53,7 @@ export function RevealAnswer({
   const slot = slotQ.data as bigint | undefined;
   const subQ = useReadContract({
     address: contractAddress,
-    abi: aiJudgeAbi,
+    abi: eclipseAbi,
     functionName: "getSubmission",
     args: slot && slot > 0n ? [bountyId, slot - 1n] : undefined,
     chainId: ritualChain.id,
@@ -77,7 +78,7 @@ export function RevealAnswer({
     try {
       await tx.run({
         address: contractAddress,
-        abi: aiJudgeAbi,
+        abi: eclipseAbi,
         functionName: "revealAnswer",
         args: [bountyId, answer.trim(), salt as `0x${string}`],
         chainId: ritualChain.id,
@@ -90,45 +91,55 @@ export function RevealAnswer({
   return (
     <Card>
       <CardHeader
-        title="Act II · Reveal your answer"
-        subtitle="The contract verifies keccak256(answer, salt, you, bountyId) against your commitment."
+        title="Break the Eclipse · Reveal your answer"
+        subtitle="Your salt is the moon that opens the eclipse. Reveal aligns answer, salt, sender, and bounty."
       />
       <CardBody>
         <form onSubmit={handleReveal} className="space-y-3">
           {stored ? (
-            <Notice tone="green">
-              Found your saved commitment for this bounty in this browser — answer and salt are
+            <Notice tone="cyan">
+              Found your saved corona for this bounty in this browser — answer and salt are
               filled in below.
             </Notice>
           ) : (
             <Notice tone="amber">
-              No saved commitment found in this browser for the connected wallet. If you committed
-              elsewhere, paste your answer and salt manually.
+              No saved corona found in this browser for the connected wallet. If you entered the
+              eclipse elsewhere, paste your answer and salt manually.
             </Notice>
           )}
           <Field label="Answer">
             <Textarea value={answer} onChange={(e) => setAnswerEdit(e.target.value)} rows={4} />
           </Field>
-          <Field label="Salt" hint="Auto-filled if you committed in this browser.">
+          <Field label="Salt (the moon)" hint="Auto-filled if you committed in this browser.">
             <Input value={salt} onChange={(e) => setSaltEdit(e.target.value)} placeholder="0x…" />
           </Field>
 
           {preview ? (
-            <Notice tone={matches === false ? "amber" : "zinc"}>
-              <div className="font-mono text-[11px] break-all">computed: {preview}</div>
-              {onChainCommitment ? (
-                <div className="mt-1 font-mono text-[11px] break-all opacity-70">
-                  on-chain: {onChainCommitment}
+            <Notice tone={matches === false ? "amber" : matches === true ? "cyan" : "zinc"}>
+              <div className="mb-1 text-[11px] uppercase tracking-[0.14em] opacity-70">
+                Two coronas
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-20 shrink-0 text-[11px] text-zinc-400">recomputed</span>
+                  <CopyHash value={preview} />
                 </div>
-              ) : null}
+                {onChainCommitment ? (
+                  <div className="flex items-center gap-2">
+                    <span className="w-20 shrink-0 text-[11px] text-zinc-400">on-chain</span>
+                    <CopyHash value={onChainCommitment} />
+                  </div>
+                ) : null}
+              </div>
               {matches === false ? (
                 <div className="mt-2 text-amber-300">
-                  This answer + salt does NOT match your on-chain commitment. Revealing now would
-                  revert (commitment mismatch). Use the exact answer and salt you committed with.
+                  These coronas don&apos;t align — this answer + salt does NOT match your on-chain
+                  commitment. Revealing now would revert (CoronaMismatch). Use the exact answer and
+                  salt you committed with.
                 </div>
               ) : null}
               {matches === true ? (
-                <div className="mt-2 text-green-400">Matches your on-chain commitment ✓</div>
+                <div className="mt-2 text-cyan-300">Coronas aligned — matches your commitment ✓</div>
               ) : null}
             </Notice>
           ) : null}
@@ -138,7 +149,7 @@ export function RevealAnswer({
             disabled={!isConnected || !answer.trim() || !validSalt || matches === false || tx.isBusy}
             className="w-full"
           >
-            {tx.isBusy ? "Revealing…" : "Open the mask (reveal)"}
+            {tx.isBusy ? "Opening the eclipse…" : "Open the eclipse (reveal)"}
           </Button>
           {!isConnected && <p className="text-xs text-zinc-500">Connect your wallet to reveal.</p>}
           {!validSalt && salt ? (
